@@ -48,7 +48,9 @@
 }
 .device-info li{
     color:#E5C3A6;
-    list-style: square;
+}
+.device-info ul{
+    list-style: none;
 }
 .device-info .device-edit-button{
     display: flex;

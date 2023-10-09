@@ -5,14 +5,31 @@ body {
     font-family: Arial, sans-serif;
   }
   
-  .login-container {
+  .edit-form {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    flex-direction: column;
+  }
+
+  .button-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 10px;
+  }
+  .button-container button{
+    margin-right: 100px;
+  }
+
+  .button-container a{
+    margin-right: 10px;
   }
   
-  .login-form {
+
+  .device-form {
     background-color: #4B527E;
     width: 50%;
     padding: 20px;
@@ -22,7 +39,7 @@ body {
     color: #E5C3A6;
   }
   
-  .login-form h1, .login-form p {
+  .device-form h1, .device-form p {
     color: #E5C3A6;
   }
   
@@ -63,3 +80,4 @@ body {
   button:hover {
     opacity: 1;
   }
+  

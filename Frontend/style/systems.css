@@ -48,7 +48,9 @@
 }
 .system-info li{
     color:#E5C3A6;
-    list-style: square;
+}
+.system-info ul{
+    list-style: none;
 }
 .system-info .system-edit-button{
     display: flex;

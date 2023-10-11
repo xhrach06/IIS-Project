@@ -35,3 +35,23 @@
 .profile ul li{
     margin-bottom: 5px;
 }
+.profile-detail{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+}
+.profile-detail button{
+    background-color: #E5C3A6;
+    border-radius: 5%;
+    border: solid;
+    border-color: #E5C3A6;
+    color: #2E4374;
+    width: 200px;
+    height: 30px;
+    margin-top: 10px;
+}
+.profile button:hover{
+    background-color: #2E4374;
+    color: #E5C3A6;
+}

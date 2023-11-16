@@ -3,26 +3,26 @@
     <head>
         <title> Devices </title>
         <link rel="stylesheet" href="./style/admin-user-view.css">
-        <link rel="stylesheet" href="./style/header.css">
+        <link rel="stylesheet" href="{{url_for('static', filename='style/header.css')}}">
     </head>
 <body>
     <div id="header">
-        <img src = "./images/logo.png" alt = "logo">
+        <img src = "{{url_for('static', filename='images/logo.png')}}" alt = "logo">
         <nav>
             <ul>
-                <a href="homepage.html"><li>Home</li></a>
-                <a href="devices.html"><li>Devices</li></a>
-                <a href="systems.html"><li>Systems</li></a>
+                <a href="/home"><li>Home</li></a>
+                <a href="/devices"><li>Devices</li></a>
+                <a href="/systems"><li>Systems</li></a>
             </ul>
         </nav>
-    <a href="profile.html"><img src = "./images/person.jpg" alt = "profile"></a>
+    <a href="profile.html"><img src = "{{url_for('static', filename='images/person.jpg')}}" alt = "profile"></a>
     </div>
     <div class="main">
         <div class="profiles">
             <div class="profile">
                 <div class="profile-info">
                     <div class="profile-image">
-                        <img src="./images/person.jpg" alt="profile">
+                        <img src="{{url_for('static', filename='images/person.jpg')}}" alt="profile">
                     </div>
                     <div class="profile-name">
                         <h2>Nguyen Van A</h2>
@@ -48,7 +48,7 @@
             <div class="profile">
                 <div class="profile-info">
                     <div class="profile-image">
-                        <img src="./images/person.jpg" alt="profile">
+                        <img src="{{url_for('static', filename='images/person.jpg')}}" alt="profile">
                     </div>
                     <div class="profile-name">
                         <h2>Nguyen Van A</h2>
@@ -74,7 +74,7 @@
             <div class="profile">
                 <div class="profile-info">
                     <div class="profile-image">
-                        <img src="./images/person.jpg" alt="profile">
+                        <img src="{{url_for('static', filename='images/person.jpg')}}" alt="profile">
                     </div>
                     <div class="profile-name">
                         <h2>Your New User's Name</h2> 

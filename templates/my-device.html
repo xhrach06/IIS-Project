@@ -2,34 +2,34 @@
 <html>
     <head>
         <title> Devices & Systems </title>
-        <link rel="stylesheet" href="./style/my-device.css">
-        <link rel="stylesheet" href="./style/header.css">
+        <link rel="stylesheet" href="{{url_for('static', filename='style/my-device.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='style/header.css')}}">
     </head>
 <body>
     <div id="header">
-        <img src = "./images/logo.png" alt = "logo">
+        <img src = "{{url_for('static', filename='images/logo.png')}}" alt = "logo">
         <nav>
             <ul>
-                <a href="homepage.html"><li>Home</li></a>
-                <a href="devices.html"><li>Devices</li></a>
-                <a href="systems.html"><li>Systems</li></a>
+                <a href="/home"><li>Home</li></a>
+                <a href="/devices"><li>Devices</li></a>
+                <a href="/systems"><li>Systems</li></a>
             </ul>
         </nav>
-    <a href="profile.html"><img src = "./images/person.jpg" alt = "profile"></a>
+    <a href="/profile"><img src = "{{url_for('static', filename='images/person.jpg')}}" alt = "profile"></a>
     </div>
     <div class="main">
         <div class="devices">
             <div class ="device-cluster">
                 <div class="device-basic">
                     <div class="device-image">
-                        <img src="images/karburator.jpg" alt="device-image">
+                        <img src="{{url_for('static', filename='images/karburator.jpg')}}" alt="device-image">
                     </div>
                     <div class="right-side">
                         <div class="device-name">
                             <h2>karburator</h2>
                         </div>
                         <div class="kpi-image">
-                            <img src="images/kpi-green.webp" alt="green kpi">
+                            <img src="{{url_for('static', filename='images/kpi-green.webp')}}" alt="green kpi">
                         </div>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                         </ul>
                     </div>
                     <div class="device-edit-button">
-                        <a href="edit-device.html">
+                        <a href="/edit-device">
                             <button type="button">Edit device</button>
                         </a>
                     </div>
@@ -52,14 +52,14 @@
             <div class ="device-cluster">
                 <div class="device-basic">
                     <div class="device-image">
-                        <img src="images/karburator.jpg" alt="device-image">
+                        <img src="{{url_for('static', filename='images/karburator.jpg')}}" alt="device-image">
                     </div>
                     <div class="right-side">
                         <div class="device-name">
                             <h2>karburator</h2>
                         </div>
                         <div class="kpi-image">
-                            <img src="images/kpi-green.webp" alt="green kpi">
+                            <img src="{{url_for('static', filename='images/kpi-green.webp')}}" alt="green kpi">
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         </ul>
                     </div>
                     <div class="device-edit-button">
-                        <a href="edit-device.html">
+                        <a href="/edit-device">
                             <button type="button">Edit device</button>
                         </a>
                     </div>
@@ -84,14 +84,14 @@
             <div class ="system-cluster">
                 <div class="system-basic">
                     <div class="system-image">
-                        <img src="images/motor.png" alt="system-image">
+                        <img src="{{url_for('static', filename='images/motor.png')}}" alt="system-image">
                     </div>
                     <div class="right-side">
                         <div class="system-name">
                             <h2>Motor</h2>
                         </div>
                         <div class="kpi-image">
-                            <img src="images/kpi-green.webp" alt="green kpi">
+                            <img src="{{url_for('static', filename='images/kpi-green.webp')}}" alt="green kpi">
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                         </ul>
                     </div>
                     <div class="system-edit-button">
-                        <a href="system-edit.html">
+                        <a href="/edit-system">
                             <button type="button">Edit system</button>
                         </a>
                     </div>

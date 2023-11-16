@@ -2,7 +2,7 @@ CREATE TABLE user(
     login varchar(64) NOT NULL PRIMARY KEY,
     first_name varchar(64) NOT NULL,
     last_name varchar(64) NOT NULL,
-    password varchar(64) NOT NULL,
+    password char(255) NOT NULL,
     email varchar(64) NOT NULL CONSTRAINT email_format_check CHECK (
     email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
     ),

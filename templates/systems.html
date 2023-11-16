@@ -1,34 +1,34 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="./style/systems.css">
-<link rel="stylesheet" href="./style/header.css">
+<link rel="stylesheet" href="{{url_for('static', filename='style/systems.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='style/header.css')}}">
 <html>
     <head>
         <title> Systems </title>
     </head>
 <body>
     <div id="header">
-        <img src = "./images/logo.png" alt = "logo">
+        <img src = "{{url_for('static', filename='images/logo.png')}}" alt = "logo">
         <nav>
             <ul>
-                <a href="homepage.html"><li>Home</li></a>
-                <a href="devices.html"><li>Devices</li></a>
-                <a href="systems.html"><li>Systems</li></a>
+                <a href="/home"><li>Home</li></a>
+                <a href="/devices"><li>Devices</li></a>
+                <a href="/systems"><li>Systems</li></a>
             </ul>
         </nav>
-    <a href="profile.html"><img src = "./images/person.jpg" alt = "profile"></a>
+    <a href="/profile"><img src = "{{url_for('static', filename='images/person.jpg')}}" alt = "profile"></a>
     </div>
     <div id ="main">
         <div class ="system-cluster">
             <div class="system-basic">
                 <div class="system-image">
-                    <img src="images/motor.png" alt="system-image">
+                    <img src="{{url_for('static', filename='images/motor.png')}}" alt="system-image">
                 </div>
                 <div class="right-side">
                     <div class="system-name">
                         <h2>Motor</h2>
                     </div>
                     <div class="kpi-image">
-                        <img src="images/kpi-green.webp" alt="green kpi">
+                        <img src="{{url_for('static', filename='images/kpi-green.webp')}}" alt="green kpi">
                     </div>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                     </ul>
                 </div>
                 <div class="system-edit-button">
-                    <a href="system-edit.html">
+                    <a href="/edit-system">
                         <button type="button">Edit system</button>
                     </a>
                 </div>
@@ -50,7 +50,7 @@
         </div>
         <div id="add-system">
             <div id="add-system-button">
-                <a href="system-add.html">
+                <a href="/add-system">
                     <button type="button">Add system</button>
                 </a>
             </div>

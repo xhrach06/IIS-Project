@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: rgb(56,69,114); /* Dark blue-ish color */
+        }
+
+        .container-fluid{
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .navbar{
+            background-color: rgb(78, 83, 124);
+            border-bottom: 5px solid rgb(219, 194,166);
+        }
+        
+    </style>
+</head>
+<body>
+    
+        <!-- Top Navigation for Profile and Logout -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <button class="btn btn-light" type="button">Logout</button>
+            <div class="navbar-nav ml-auto">
+                <a class="nav-item nav-link" href="#">
+                    <img src="path_to_profile_photo.jpg" width="30" height="30" class="rounded-circle">
+                </a>
+            </div>
+        </nav>
+
+        <!-- Central Navigation Buttons -->
+        <div class="row justify-content-center align-items-center" style="height: 80vh;">
+            <div class="col-md-4 text-center">
+                <button type="butnmton" class="btn btn-light btn-lg btn-block mb-3">Show All Systems</button>
+                <button type="button" class="btn btn-light btn-lg btn-block mb-3">Show My Systems</button>
+                <button type="button" class="btn btn-light btn-lg btn-block mb-3">Sharing Options</button>
+                <button type="button" class="btn btn-light btn-lg btn-block mb-3">Manage Devices</button>
+            </div>
+        </div>
+    
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="./style/header.css">
+<link rel="stylesheet" href="./style/edit-device.css">
+<html>
+
+<head>
+    <title> Add Device </title>
+</head>
+
+<body>
+    <div id="header">
+        <img src="./images/logo.png" alt="logo">
+        <nav>
+            <ul>
+                <a href="homepage.html">
+                    <li>Home</li>
+                </a>
+                <a href="devices.html">
+                    <li>Devices</li>
+                </a>
+                <a href="systems.html">
+                    <li>Systems</li>
+                </a>
+            </ul>
+        </nav>
+        <a href="profile.html"><img src="./images/person.jpg" alt="profile"></a>
+    </div>
+    <div class="edit-form">
+        <form action="edit-device.php" class="device-form">
+            <h1>Add Device</h1>
+            <p>Please fill in this form to edit a device.</p>
+            <hr>
+            <div class="input-container">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="input-container">
+                <label for="serial">Serial</label>
+                <input type="text" id="serial" name="serial" required>
+            </div>
+            <div class="input-container">
+                <label for="description">Description</label>
+                <input type="text" id="description" name="description" required>
+            </div>
+            <div class="heading">
+                <h3>Parameters</h3>
+            </div>
+            <div class="add-param">
+                <input type="button" id="add-param" name="add-param" value="Add parameter" onclick="addParameter()">
+            </div>
+            <div class="param-container">
+                <div class="parameter">
+                    <label for="param-name">Name<input type="text" id="param-name" name="param-name"></label>
+                    <label for="min-value">Min value<input type="number" id="min-value" name="min-value"></label>
+                    <label for="max-value">Max value<input type="number" id="max-value" name="max-value"></label>
+                </div>
+                <div class="kpi">
+                    <label for="remove-param">Remove param<input type="button" id="remove-param" name="remove-param"
+                            value="Remove parameter" onclick="removeParameter()"></label>
+                    <label for="kpi">KPI<input type="button" id="kpi" name="kpi" , value="KPI ON"></label>
+                    <label for="ok-if">OK if<input type="button" id="ok-if" name="ok-if" , value="Higher"></label>
+                    <label for="treshold">Treshold<input type="number" id="treshold" name="treshold"></label>
+                </div>
+            </div>
+        </form>
+        <div class="button-container">
+            <a href="devices.html"><button type="submit">Accept</button></a>
+            <a href="devices.html"><button type="submit">Cancel</button></a>
+            <a href="devices.html"><button type="submit">Delete</button></a>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const kpi_button = document.querySelector("#kpi");
+    const ok_if_button = document.querySelector("#ok-if");
+    const remove_param_button = document.querySelector("#remove-param");
+    remove_param_button.addEventListener("click", removeParameter);
+    kpi_button.addEventListener("click", updateButton);
+    ok_if_button.addEventListener("click", updateButton_ok);
+
+    function updateButton_ok(event) {
+        // Access the button that triggered the click event
+        const clickedButton = event.target;
+
+        if (clickedButton.value === "Higher") {
+            clickedButton.value = "Lower";
+        } else {
+            clickedButton.value = "Higher";
+        }
+    }
+
+    function updateButton(event) {
+        // Access the button that triggered the click event
+        const clickedButton = event.target;
+
+        if (clickedButton.value === "KPI ON") {
+            clickedButton.value = "KPI OFF";
+        } else {
+            clickedButton.value = "KPI ON";
+        }
+    }
+
+
+    function removeParameter(event) {
+        const clickedButton = event.target;
+        const param_container = clickedButton.parentNode.parentNode.parentNode;
+        param_container.parentNode.removeChild(param_container);
+
+    }
+
+    function addParameter() {
+        // Create a new parameter container div
+        var newParamContainerDiv = document.createElement('div');
+        newParamContainerDiv.className = 'param-container';
+
+        // Create parameter div
+        var parameterDiv = document.createElement('div');
+        parameterDiv.className = 'parameter';
+
+        var nameLabel = createInputLabel('param-name', 'Name', 'text');
+        var minValueLabel = createInputLabel('min-value', 'Min value', 'number');
+        var maxValueLabel = createInputLabel('max-value', 'Max value', 'number');
+
+        parameterDiv.appendChild(nameLabel);
+        parameterDiv.appendChild(minValueLabel);
+        parameterDiv.appendChild(maxValueLabel);
+
+        // Create KPI div
+        var kpiDiv = document.createElement('div');
+        kpiDiv.className = 'kpi';
+
+        var removeParamButton = createInputLabel('remove-param', 'Remove parameter', 'button', 'remove-param');
+        var kpiLabel = createInputLabel('kpi', 'KPI', 'button', 'kpi');
+        var okIfLabel = createInputLabel('ok-if', 'OK if', 'button', 'ok-if');
+        var tresholdLabel = createInputLabel('treshold', 'Treshold', 'number');
+
+        kpiDiv.appendChild(removeParamButton);
+        kpiDiv.appendChild(kpiLabel);
+        kpiDiv.appendChild(okIfLabel);
+        kpiDiv.appendChild(tresholdLabel);
+
+        // Append parameter and KPI divs to the new parameter container div
+        newParamContainerDiv.appendChild(parameterDiv);
+        newParamContainerDiv.appendChild(kpiDiv);
+
+        // Create "Add parameter" button div
+        var addParamDiv = document.createElement('div');
+        addParamDiv.className = 'add-param';
+
+        var addParamButton = createInputButton('add-param', 'Add parameter');
+        addParamButton.onclick = addParameter; // Assign the same function to the new button
+
+        //addParamDiv.appendChild(addParamButton);
+        newParamContainerDiv.appendChild(addParamDiv);
+
+        // Append the new parameter container div to the body or any other desired parent element
+        var form = document.querySelector('.device-form'); // Adjust the selector if needed
+        var lastParamContainer = form.querySelector('.param-container:last-child');
+
+        if (lastParamContainer) {
+            // If there's an existing .param-container, insert the new one after it
+            form.insertBefore(newParamContainerDiv, lastParamContainer.nextSibling);
+        } else {
+            // If no existing .param-container, just append it to the form
+            form.appendChild(newParamContainerDiv);
+        }
+
+    }
+
+    // Helper function to create label elements
+    function createInputLabel(id, labelText, type, value) {
+        var label = document.createElement('label');
+        label.for = id;
+        label.textContent = labelText;
+
+        var input = document.createElement('input');
+        if (type == 'number') {
+            input.type = 'number';
+        }
+        else if (type == 'text') {
+            input.type = 'text';
+        }
+        else if (type == 'button') {
+            input.type = 'button';
+            if (value === 'kpi') {
+                input.value = 'KPI ON';
+                input.onclick = updateButton;
+            } else if (value === 'ok-if') {
+                input.value = 'Higher';
+                input.onclick = updateButton_ok;
+            }
+            else if (value === 'remove-param') {
+                input.value = 'Remove parameter';
+                input.onclick = removeParameter;
+            }
+        }
+
+        input.id = id;
+        input.name = id;
+
+        label.appendChild(input);
+
+        return label;
+    }
+
+    // Helper function to create input button elements
+    function createInputButton(id, value) {
+        var button = document.createElement('input');
+        button.type = 'button';
+        button.id = id;
+        button.name = id;
+        button.value = value;
+
+        return button;
+    }
+
+</script>

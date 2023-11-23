@@ -52,6 +52,7 @@
             <div class="device-container">
                 <p>Device1</p>
                 <p>Description Description Description</p>
+                <button type="button" onclick="removeDevice(event)">Remove</button>
             </div>
         </form>
         <div class="button-container">
@@ -66,7 +67,17 @@
 
 <script>
 
+function removeDevice(event){
+    var deviceContainer = event.target.closest('.device-container');
+    deviceContainer.remove();
+}
+
 function addDevice() {
+    var selectedDevice = document.getElementById("dropdown-device").value;
+    // Check if the selected value is "default"
+    if (selectedDevice === "default") {
+        return; // Do nothing if the selected value is "default"
+    }
     var device = document.getElementById("dropdown-device").value;
     var deviceContainer = document.createElement("div");
     deviceContainer.className = "device-container";
@@ -74,8 +85,12 @@ function addDevice() {
     deviceName.textContent  = "new device";
     var deviceDescription = document.createElement("p");
     deviceDescription.textContent  = "new device description";
+    var removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.onclick = removeDevice;
     deviceContainer.appendChild(deviceName);
     deviceContainer.appendChild(deviceDescription);
+    deviceContainer.appendChild(removeButton);
     document.getElementsByClassName("edit-form")[0].appendChild(deviceContainer);
     var form = document.querySelector('.device-form');
     var lastDevContainer = form.querySelector('.device-container:last-child');

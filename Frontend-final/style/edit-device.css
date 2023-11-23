@@ -1,8 +1,12 @@
-body {
-  background-color: #2E4374;
-  padding: 0;
-  margin: 0;
-  font-family: Arial, sans-serif;
+body{
+  background-color: rgb(56,69,114); /* Dark blue-ish color */
+  position: relative; /* Needed for absolute positioning of divider */
+  min-height: 100vh; /* Ensure full vertical height */
+}
+.navbar {
+  background-color: rgb(78, 83, 124);
+  border-bottom: 5px solid rgb(219, 194, 166);
+  margin-bottom: 12px;
 }
 
 .edit-form {
@@ -49,13 +53,6 @@ body {
   height: 100%;
 }
 
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  margin-top: 10px;
-}
 
 .button-container button {
   margin-right: 100px;
@@ -104,16 +101,7 @@ input[type="checkbox"] {
   margin-right: 5px;
 }
 
-button {
-  background-color: #04AA6D;
-  color: white;
-  padding: 14px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  opacity: 0.9;
-}
+
 
 button:hover {
   opacity: 1;

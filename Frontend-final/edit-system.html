@@ -1,30 +1,22 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="./style/header.css">
-<link rel="stylesheet" href="./style/add-system.css">
+
 <html>
 
 <head>
     <title> Edit System </title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./style/add-system.css">
 </head>
 
 <body>
-    <div id="header">
-        <img src="./images/logo.png" alt="logo">
-        <nav>
-            <ul>
-                <a href="homepage.html">
-                    <li>Home</li>
-                </a>
-                <a href="devices.html">
-                    <li>Devices</li>
-                </a>
-                <a href="systems.html">
-                    <li>Systems</li>
-                </a>
-            </ul>
-        </nav>
-        <a href="profile.html"><img src="./images/person.jpg" alt="profile"></a>
-    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <button class="btn btn-light" type="button">Cancel</button>
+        <div class="navbar-nav ml-auto">
+            <button class="btn btn-light" type="button">Confirm</button>
+        </div>
+    </nav>
+
     <div class="edit-form">
         <form action="edit-device.php" class="device-form">
             <h1>Edit System</h1>
@@ -50,17 +42,15 @@
                 </select>
             </div>
             <div class="device-container">
-                <p>Device1</p>
-                <p>Description Description Description</p>
+                <h4>Device1</h4>
                 <button type="button" onclick="removeDevice(event)">Remove</button>
             </div>
         </form>
-        <div class="button-container">
-            <a href="devices.html"><button type="submit">Accept</button></a>
-            <a href="devices.html"><button type="submit">Cancel</button></a>
-            <a href="devices.html"><button type="submit">Delete</button></a>
-        </div>
-    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 
 </html>

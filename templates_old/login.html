@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Log in</title>
+        <link href="{{url_for('static', filename='style/login.css')}}" rel="stylesheet">
+    </head>
+    <body>
+        <div class="login-container">
+            <form action="/login_page.php" class="login-form">
+                <h1>Log In</h1>
+                <p>Welcome back! Please enter your credentials.</p>
+                <hr>
+                <div class="input-container">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+                <div class="input-container">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                <div class="button-container">
+                    <button id="submit-button" type="button">Log In</button>
+                </div>
+                <div class = "register-container">
+                    <p>Don't have an account? <a href="/register">Continue as guest(fix_later)</a></p>
+                </div>
+            </form>
+        </div>
+        <script>
+            let button = document.getElementById("submit-button");
+            let in_email = document.getElementById("email");
+            let in_password = document.getElementById("password");
+            button.addEventListener("click", async () => {
+                try {
+                    const response = await fetch("{{url_for('api_login')}}", {
+                        method: "POST",
+                        headers: {
+                        "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            email: in_email.value,
+                            password: in_password.value
+                        }),
+                    });
+                    
+                    const result = await response.json();
+                    if (result.error == false) {
+                        window.location.href = "{{url_for('profile')}}";
+                    } else {
+                        alert("Error: "+ result.message);
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Error (in console)");
+                }
+            });
+        </script>
+    </body>
+</html>

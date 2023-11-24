@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title> Edit System </title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='style/add-system.css')}}">
+</head>
+
+<body>
+    {% for device in devices %}
+        <div style="display: none" name="device_data" id="{{device[0]}}">
+            <p>{{device[1]}}</p>
+            <p>{{device[2]}}</p>
+        </div>
+    {% endfor %}
+    <p style="display: none" name="system_data">{{system[0][2]}}</p>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <button class="btn btn-light" type="button" onclick="redirectToPage('/my-systems')">Cancel</button>
+        <div class="navbar-nav ml-auto">
+            <button class="btn btn-light" type="button" onclick="send_form()">Confirm</button>
+        </div>
+    </nav>
+
+
+    <div class="edit-form">
+        <form action="edit-device.php" class="device-form">
+            <h1>Edit System</h1>
+            <p>Please fill in this form to edit a system.</p>
+            <hr>
+            <div class="input-container">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{system[0][0]}}" required>
+            </div>
+            <div class="input-container">
+                <label for="description">Description</label>
+                <input type="text" id="description" name="description" value="{{system[0][1]}}" required>
+            </div>
+            <div class="heading">
+                <h3>Devices</h3>
+            </div>
+            <div class="add-device">
+                <label for="dropdown-device">Select a Device:</label>
+                <select id="dropdown-device" name="dropdown-device" onchange="addDevice()">
+                    <option value="default">Select a Device</option>
+                    {% for device in devices %}
+                        <option value={{device[0]}}>{{device[1]}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% for device in sys_devices %}
+                <div id="{{device[0]}}" class="device-container">
+                    <p>{{device[1]}}</p>
+                    <p>{{device[2]}}</p>
+                    <button type="button" onclick="removeDevice(event)">Remove</button>
+                </div>
+            {% endfor %}
+        </form>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+    </script>
+    <script>
+        let in_name = document.getElementById("name");
+        let in_description = document.getElementById("description");
+
+        async function send_form() {
+            let deviceElements = document.getElementsByClassName("device-container");
+            let device_ids = [];
+
+            for (let i = 0; i < deviceElements.length; i++) {
+                if (!device_ids.includes(parseInt(deviceElements[i].id))) {
+                    device_ids.push(parseInt(deviceElements[i].id))
+                }
+            }
+
+            if (in_name.value == "" || in_description.value == "") {
+                alert("One of the device fields is missing.");
+                return;
+            }
+            
+            try {
+                const response = await fetch("{{url_for('api_edit_system')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: in_name.value,
+                        description: in_description.value,
+                        device_ids: device_ids,
+                        system_id: parseInt(document.getElementsByName("system_data")[0].innerHTML)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/my-systems";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+    </script>
+</body>
+
+</html>
+
+<script>
+
+function removeDevice(event){
+    var deviceContainer = event.target.closest('.device-container');
+    deviceContainer.remove();
+}
+
+function addDevice() {
+    var selectedDevice = document.getElementById("dropdown-device").value;
+    // Check if the selected value is "default"
+    if (selectedDevice === "default") {
+        return; // Do nothing if the selected value is "default"
+    }
+    var device = document.getElementById("dropdown-device").value;
+    var deviceContainer = document.createElement("div");
+    deviceContainer.className = "device-container";
+    deviceContainer.id = device;
+    var deviceName = document.createElement("p");
+    deviceName.textContent  = document.getElementById(device).children[0].innerHTML;
+    var deviceDescription = document.createElement("p");
+    deviceDescription.textContent  = document.getElementById(device).children[1].innerHTML;
+    var removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.onclick = removeDevice;
+    deviceContainer.appendChild(deviceName);
+    deviceContainer.appendChild(deviceDescription);
+    deviceContainer.appendChild(removeButton);
+    document.getElementsByClassName("edit-form")[0].appendChild(deviceContainer);
+    var form = document.querySelector('.device-form');
+    var lastDevContainer = form.querySelector('.device-container:last-child');
+
+        if (lastDevContainer) {
+            // If there's an existing .param-container, insert the new one after it
+            form.insertBefore(deviceContainer, lastDevContainer.nextSibling);
+        } else {
+            // If no existing .param-container, just append it to the form
+            form.appendChild(deviceContainer);
+        }
+}
+</script>

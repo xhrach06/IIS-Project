@@ -1,0 +1,90 @@
+body{
+    background-color: rgb(56,69,114); /* Dark blue-ish color */
+    position: relative; /* Needed for absolute positioning of divider */
+    min-height: 100vh; /* Ensure full vertical height */
+  }
+  .navbar {
+    background-color: rgb(78, 83, 124);
+    border-bottom: 5px solid rgb(219, 194, 166);
+    margin-bottom: 12px;
+  }
+  
+
+.edit-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.button-container button {
+    margin-right: 100px;
+}
+
+.button-container a {
+    margin-right: 10px;
+}
+
+
+.device-form {
+    background-color: #4B527E;
+    width: 50%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    color: #E5C3A6;
+}
+
+.device-container{
+    margin-top: 5px;
+    border: 2px #E5C3A6 solid;
+    display: flex;
+    padding-right: 0px;
+    padding-left: 5px;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.device-container button{
+    width:20%;
+}
+
+.device-form h1,
+.device-form p {
+    color: #E5C3A6;
+}
+
+.input-container {
+    margin-bottom: 20px;
+    margin-right: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+

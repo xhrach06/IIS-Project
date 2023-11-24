@@ -1,83 +1,108 @@
-body {
-    background-color: #2E4374;
-    padding: 0;
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  
-  .edit-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-  }
+body{
+  background-color: rgb(56,69,114); /* Dark blue-ish color */
+  position: relative; /* Needed for absolute positioning of divider */
+  min-height: 100vh; /* Ensure full vertical height */
+}
+.navbar {
+  background-color: rgb(78, 83, 124);
+  border-bottom: 5px solid rgb(219, 194, 166);
+  margin-bottom: 12px;
+}
 
-  .button-container{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;
-    margin-top: 10px;
-  }
-  .button-container button{
-    margin-right: 100px;
-  }
+.edit-form {
+  margin-top: 10px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
 
-  .button-container a{
-    margin-right: 10px;
-  }
-  
+.edit-form .param-container {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 3px solid #E5C3A6;
+}
 
-  .device-form {
-    background-color: #4B527E;
-    width: 50%;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    color: #E5C3A6;
-  }
-  
-  .device-form h1, .device-form p {
-    color: #E5C3A6;
-  }
-  
-  .input-container {
-    margin-bottom: 20px;
-    margin-right: 20px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  input[type="text"],
-  input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: #f1f1f1;
-  }
-  
-  input[type="checkbox"] {
-    margin-right: 5px;
-  }
-  
-  button {
-    background-color: #04AA6D;
-    color: white;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    opacity: 0.9;
-  }
-  
-  button:hover {
-    opacity: 1;
-  }
-  
+.param-container .parameter,
+.param-container .kpi {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Vertically center align items */
+  margin-bottom: 10px; /* Add some margin for separation */
+  justify-content: space-between;
+}
+
+.parameter label,
+.kpi label {
+  flex: 1; /* Distribute space evenly among labels */
+  text-align: center;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.parameter input,
+.kpi input {
+  flex: 2; /* Distribute space evenly among inputs */
+}
+
+.param-container .parameter input[type="button"],
+.param-container .kpi input[type="button"] {
+  flex: 1; /* Distribute space evenly among buttons */
+  width: 100%;
+  height: 100%;
+}
+
+
+.button-container button {
+  margin-right: 100px;
+}
+
+.button-container a {
+  margin-right: 10px;
+}
+
+
+.device-form {
+  background-color: #4B527E;
+  width: 50%;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  color: #E5C3A6;
+}
+
+.device-form h1,
+.device-form p {
+  color: #E5C3A6;
+}
+
+.input-container {
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+
+
+button:hover {
+  opacity: 1;
+}

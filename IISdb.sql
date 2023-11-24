@@ -1,68 +1,66 @@
 CREATE TABLE user(
-    login varchar(64) NOT NULL PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name varchar(64) NOT NULL,
     last_name varchar(64) NOT NULL,
-    password char(255) NOT NULL,
-    email varchar(64) NOT NULL CONSTRAINT email_format_check CHECK (
+    password varchar(255) NOT NULL,
+    email varchar(64) NOT NULL UNIQUE CONSTRAINT email_format_check CHECK (
     email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
     ),
-    IS_ADMIN int DEFAULT 0
+    is_admin INT DEFAULT 0,
+    is_broker INT DEFAULT 0
 );
 
 CREATE TABLE device(
-    id_device INT AUTO_INCREMENT PRIMARY KEY,
-    description varchar(64) DEFAULT NULL,
-    user_alias varchar(64) DEFAULT NULL,
-    type varchar(64),
-
-    login varchar(64),
-    FOREIGN KEY (login) REFERENCES user(login)
+    device_id INT AUTO_INCREMENT PRIMARY KEY,
+    name varchar(64) NOT NULL,
+    description varchar(256) DEFAULT NULL,
+    
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE parameter(
-  id_param INT AUTO_INCREMENT PRIMARY KEY,
+  param_id INT AUTO_INCREMENT PRIMARY KEY,
   name varchar(64),
-  max_value INT,
-  min_value INT
+  max_value INT NOT NULL,
+  min_value INT NOT NULL,
+  kpi_on_off INT DEFAULT 0, -- 0=off, 1=on
+  ok_if INT NOT NULL, -- 0=lower, 1=higher
+  kpi_treshold DOUBLE NOT NULL,
+  current_value INT,
+  device_id INT,
+  FOREIGN KEY (device_id) REFERENCES device(device_id) ON DELETE CASCADE
 );
 
-CREATE TABLE value(
-    id_device INT,
-    id_param INT,
-    PRIMARY KEY(id_device, id_param),
+--This trigger automatically sets current_value to the value of min_value for each new row inserted into the table.
+CREATE TRIGGER set_current_value
+BEFORE INSERT ON parameter
+FOR EACH ROW
+SET NEW.current_value = NEW.min_value;
 
-    FOREIGN KEY (id_device) REFERENCES device(id_device),
-    FOREIGN KEY (id_param) REFERENCES PARAMETER(id_param),
-
-    current_value INT,
-    KPI_THRESHOLD INT
-);
 
 CREATE TABLE systems(
-    id_system INT AUTO_INCREMENT PRIMARY KEY,
+    system_id INT AUTO_INCREMENT PRIMARY KEY,
     name varchar(64) NOT NULL,
-    description varchar(64) DEFAULT NULL,
+    description varchar(256) DEFAULT NULL,
 
-    login varchar(64),
-    FOREIGN KEY (login) REFERENCES user(login)
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE users_systems(
-    id_system INT,
-    login varchar(64),
-    PRIMARY KEY (login, id_system),
-    FOREIGN KEY (id_system) REFERENCES systems(id_system),
-    FOREIGN KEY (login) REFERENCES user(login)
+    system_id INT,
+    user_id INT, 
+    PRIMARY KEY (user_id, system_id),
+    FOREIGN KEY (system_id) REFERENCES system(system_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE device_systems(
-    id_system INT,
-    id_device INT,
+    system_id INT,
+    device_id INT,
 
-    PRIMARY KEY (id_system),
-    FOREIGN KEY (id_system) REFERENCES systems(id_system),
-    FOREIGN KEY (id_device) REFERENCES device(id_device)
+    PRIMARY KEY (system_id, device_id),
+    FOREIGN KEY (system_id) REFERENCES systems(system_id) ON DELETE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES device(device_id) ON DELETE CASCADE
 );
-
-
-

@@ -6,6 +6,7 @@ CREATE TABLE user(
     email varchar(64) NOT NULL UNIQUE CONSTRAINT email_format_check CHECK (
     email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
     ),
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     is_admin INT DEFAULT 0,
     is_broker INT DEFAULT 0
 );
@@ -43,16 +44,17 @@ CREATE TABLE systems(
     system_id INT AUTO_INCREMENT PRIMARY KEY,
     name varchar(64) NOT NULL,
     description varchar(256) DEFAULT NULL,
-
+    created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     user_id INT,
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE users_systems(
     system_id INT,
-    user_id INT, 
+    user_id INT,
+    shared_since DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, system_id),
-    FOREIGN KEY (system_id) REFERENCES system(system_id) ON DELETE CASCADE,
+    FOREIGN KEY (system_id) REFERENCES systems(system_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 

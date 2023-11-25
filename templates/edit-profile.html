@@ -2,36 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Log in</title>
+    <title>Edit User</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{url_for('static', filename='style/login.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='style/register.css')}}" rel="stylesheet">
 </head>
 <body>
-    <!-- Top Navigation for Profile and Logout -->
+
+
+
     <nav class="navbar navbar-expand-lg navbar-light">
-        <button onclick="redirectToPage('/home')" class="btn btn-light" type="button">Back</button>
+
+        <button class="btn btn-light" onclick="redirectToPage('/profile')" type="button">Back</button>      
     </nav>
-    <div class="login-container">
-        <div class="login-form">
-            <h1>Log In</h1>
-            <p>Welcome back! Please enter your credentials.</p>
+
+    <div class="register-container">
+        <div class="register-form">
+            <h1>Edit User</h1>
+            <p>Please fill in this form to edit an account.</p>
             <hr>
             <div class="input-container">
-                <label for="email">Email</label>
-                <input type="text" id="email" name="email" required>
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value={{profile[0][0]}} required>
             </div>
             <div class="input-container">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <label for="surname">Surname</label>
+                <input type="text" id="surname" name="surname" value={{profile[0][1]}} required>
             </div>
-            <button id="submit" class="btn btn-light w-50" type="button">Log In</button>
+            <div class="input-container">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" value={{profile[0][2]}} required>
+            </div>
 
-            <div class = "register-container" style="margin-top: 10px;">
-                <p>Don't have an account? <button onclick="redirectToPage('/register')" class="btn btn-light" type="button">Sign Up</button></p>
+            <div class="button-container">
+                <button class="btn btn-light w-50" id="submit-button" type="submit">Accept</button>
             </div>
         </div>
     </div>
+
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -42,31 +51,33 @@
         }
     </script>
     <script>
-        let button = document.getElementById("submit");
+        let button = document.getElementById("submit-button");
+        let in_name = document.getElementById("name");
+        let in_surname = document.getElementById("surname");
         let in_email = document.getElementById("email");
-        let in_password = document.getElementById("password");
 
         async function send_form() {
-            if (in_email.value == "" || in_password.value == "") {
+            if (in_name.value=="" || in_surname.value=="" || in_email.value=="") {
                 alert("One of the fields is missing.");
                 return;
             }
 
             try {
-                const response = await fetch("{{url_for('api_login')}}", {
+                const response = await fetch("{{url_for('api_edit_profile')}}", {
                     method: "POST",
                     headers: {
                     "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
+                        first_name: in_name.value,
+                        last_name: in_surname.value,
                         email: in_email.value,
-                        password: in_password.value
                     }),
                 });
                 
                 const result = await response.json();
                 if (result.error == false) {
-                    window.location.href = "/home";
+                    window.location.href = "/profile";
                 } else {
                     alert("Error: "+ result.message);
                 }

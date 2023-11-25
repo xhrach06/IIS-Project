@@ -49,17 +49,13 @@ body {
     margin-right: 5px;
   }
   
-  button {
-    background-color: #04AA6D;
-    color: white;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    opacity: 0.9;
-  }
+
   
   button:hover {
     opacity: 1;
   }
+
+.navbar {
+    background-color: rgb(78, 83, 124);
+    border-bottom: 5px solid rgb(219, 194, 166);
+}

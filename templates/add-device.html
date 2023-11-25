@@ -34,9 +34,6 @@
             <div class="heading">
                 <h3>Parameters</h3>
             </div>
-            <div class="add-param">
-                <input type="button" id="add-param" name="add-param" value="Add parameter" onclick="addParameter()">
-            </div>
             <div class="param-container">
                 <div class="parameter">
                     <label for="param-name">Name<input type="text" id="param-name" name="param-name"></label>
@@ -44,8 +41,6 @@
                     <label for="max-value">Max value<input type="number" id="max-value" name="max-value"></label>
                 </div>
                 <div class="kpi">
-                    <label for="remove-param">Remove param<input type="button" id="remove-param" name="remove-param"
-                            value="Remove parameter" onclick="removeParameter()"></label>
                     <label for="kpi">KPI<input type="button" id="kpi" name="kpi" , value="KPI ON"></label>
                     <label for="ok-if">OK if<input type="button" id="ok-if" name="ok-if" , value="Higher"></label>
                     <label for="treshold">Treshold<input type="number" id="treshold" name="treshold"></label>
@@ -122,8 +117,6 @@
 <script>
     const kpi_button = document.querySelector("#kpi");
     const ok_if_button = document.querySelector("#ok-if");
-    const remove_param_button = document.querySelector("#remove-param");
-    remove_param_button.addEventListener("click", removeParameter);
     kpi_button.addEventListener("click", updateButton);
     ok_if_button.addEventListener("click", updateButton_ok);
 

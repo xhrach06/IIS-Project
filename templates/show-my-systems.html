@@ -121,8 +121,15 @@
                                             <div class="vertical-divider"></div>
                                             <div class="col-6">
                                                 <p class="card-text">Active Devices: {{system[2]}}</p>
-                                                <p class="card-text">Creation Date: TODO</p>
+                                                <p class="card-text">Creation Date: {{system[5]}}</p>
                                                 <p class="card-text">Owner: {{system[3]}} {{system[4]}}</p>
+                                                <p class="card-text">Status:
+                                                    {% if system[6] == 1 %}
+                                                        <span class="rounded-circle bg-success" data-toggle="tooltip" data-placement="top" title="Everything is OK" style="display: inline-block; width: 16px; height: 16px;"></span>
+                                                    {% else %}
+                                                        <span class="rounded-circle bg-danger" data-toggle="tooltip" data-placement="top" title="Everything is OK" style="display: inline-block; width: 16px; height: 16px;"></span>
+                                                    {% endif %}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

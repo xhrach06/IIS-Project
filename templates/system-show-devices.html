@@ -100,7 +100,7 @@
                         </div>
                         <div class="vertical-divider"></div>
                         <div class="col-6">
-                            <h5 class="card-text">Description</h5>
+                            <h5 class="card-text">Description (ID:{{device[4]}})</h5>
                     
                             <p class="card-text">{{device[1]}}</p>
                 
@@ -121,12 +121,17 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-between align-items-center param-box-right">
                             <div class="param-text-left">
                                 <!-- Left aligned content here -->
-                                Value: 58</div>
+                                Value: {{device[5]}}</div>
                             <div class="param-text-left">
                                 <!-- Right aligned content here -->
-                                KPI State: 
-                                <span class="rounded-circle bg-success" data-toggle="tooltip" data-placement="top" title="Everything is OK" style="display: inline-block; width: 16px; height: 16px;"></span>
-
+                                KPI State:
+                                {% if device[3] == 1 %}
+                                    <span class="rounded-circle bg-success" data-toggle="tooltip" data-placement="top" title="Everything is OK" style="display: inline-block; width: 16px; height: 16px;"></span>
+                                {% elif device[3] == 0 %}
+                                    <span class="rounded-circle bg-danger" data-toggle="tooltip" data-placement="top" title="Everything is OK" style="display: inline-block; width: 16px; height: 16px;"></span>
+                                {% else %}
+                                OFF
+                                {% endif %}
                             </div>
                         </div>
                         

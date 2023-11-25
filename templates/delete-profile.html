@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Profile</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{url_for('static', filename='style/register.css')}}" rel="stylesheet">
+</head>
+<body>
+
+
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+
+        <button class="btn btn-light" type="button" onclick="redirectToPage('/profile')">Back</button>      
+    </nav>
+
+    <div class="register-container">
+        <div class="register-form">
+            <h1>Delete User</h1>
+            <p>Do you really want to delete user?</p>
+            <hr>
+
+            <div class="button-container">
+                <button class="btn btn-light w-50" id="delete-button" type="submit">Accept</button>
+            </div>
+            <div class="button-container">
+                <button class="btn btn-light w-50" onclick="redirectToPage('/profile')" id="cancel-button" type="submit">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        let d_button = document.getElementById("delete-button");
+        let c_button = document.getElementById("cancel-button");
+
+        async function send_form() {
+
+            try {
+                const response = await fetch("{{url_for('api_delete_profile')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        delete: true
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/home";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+
+        d_button.addEventListener("click", () => send_form());
+
+    </script>
+    <script>
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

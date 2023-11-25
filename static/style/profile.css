@@ -18,11 +18,7 @@
     border-color: #E5C3A6;
     border-radius: 5%;
 }
-.profile img{
-    border-radius: 50%;
-    width: 300px;
-    height: 300px;
-}
+
 .profile h2{
     color: #E5C3A6;
     text-align: center;
@@ -51,7 +47,8 @@
     height: 30px;
     margin-top: 10px;
 }
-.profile button:hover{
-    background-color: #2E4374;
-    color: #E5C3A6;
+
+
+.profile-info{
+    text-align: center;
 }

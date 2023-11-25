@@ -9,52 +9,45 @@
 </head>
 
 <body>
-
+    <p style="display: none;" id="p_device_id" >{{device[0][8]}}</p>
+    <p style="display: none;" id="p_parameter_id" >{{device[0][9]}}</p>
     <nav class="navbar navbar-expand-lg navbar-light">
-        <button class="btn btn-light" type="button">Cancel</button>
+        <button class="button btn btn-light" type="button" onclick="redirectToPage('/manage-devices')">Cancel</button>
         <div class="navbar-nav ml-auto">
-            <button class="btn btn-light" type="button">Confirm</button>
+            <button class="btn btn-light" type="button" onclick="send_form()">Confirm</button>
         </div>
     </nav>
 
 
     <div class="edit-form">
-        <form action="edit-device.php" class="device-form">
+        <div class="device-form">
             <h1>Edit Device</h1>
-            <p>Please fill in this form to add a device.</p>
+            <p>Please fill in this form to edit a device.</p>
             <hr>
             <div class="input-container">
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="input-container">
-                <label for="serial">Serial</label>
-                <input type="text" id="serial" name="serial" required>
+                <input type="text" id="name" name="name" value={{device[0][0]}} required>
             </div>
             <div class="input-container">
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" required>
+                <input type="text" id="description" name="description" value={{device[0][1]}} required>
             </div>
             <div class="heading">
                 <h3>Parameters</h3>
             </div>
-            <div class="add-param">
-                <input type="button" id="add-param" name="add-param" value="Add parameter" onclick="addParameter()">
-            </div>
             <div class="param-container">
                 <div class="parameter">
-                    <label for="param-name">Name<input type="text" id="param-name" name="param-name"></label>
-                    <label for="min-value">Min value<input type="number" id="min-value" name="min-value"></label>
-                    <label for="max-value">Max value<input type="number" id="max-value" name="max-value"></label>
+                    <label for="param-name">Name<input type="text" id="param-name" name="param-name" value={{device[0][2]}}></label>
+                    <label for="min-value">Min value<input type="number" id="min-value" name="min-value" value={{device[0][4]}}></label>
+                    <label for="max-value">Max value<input type="number" id="max-value" name="max-value" value={{device[0][3]}}></label>
                 </div>
                 <div class="kpi">
-                    <label for="remove-param">Remove param<input type="button" id="remove-param" name="remove-param" value="Remove parameter" onclick="removeParameter()"></label>
-                    <label for="kpi">KPI<input type="button" id="kpi" name="kpi", value="KPI ON"></label>
-                    <label for="ok-if">OK if<input type="button" id="ok-if" name="ok-if", value="Higher"></label>
-                    <label for="treshold">Treshold<input type="number" id="treshold" name="treshold"></label>
+                    <label for="kpi">KPI<input type="button" id="kpi" name="kpi", value="{{kpi[0]}}"></label>
+                    <label for="ok-if">OK if<input type="button" id="ok-if" name="ok-if", value="{{kpi[1]}}""></label>
+                    <label for="treshold">Treshold<input type="number" id="treshold" name="treshold" value={{device[0][7]}}></label>
                 </div>
             </div>  
-        </form>
+        </div>
 
 
 
@@ -63,14 +56,73 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+    </script>
+    <script>
+        let in_name = document.getElementById("name");
+        let in_description = document.getElementById("description");
+        let in_param_name = document.getElementById("param-name");
+        let in_min_value = document.getElementById("min-value");
+        let in_max_value = document.getElementById("max-value");
+        let in_kpi = document.getElementById("kpi");
+        let in_ok_if = document.getElementById("ok-if");
+        let in_treshold = document.getElementById("treshold");
+
+        let dev_id = document.getElementById("p_device_id");
+        let param_id = document.getElementById("p_parameter_id");
+
+        async function send_form() {
+            if (in_name.value == "" || in_description.value == "") {
+                alert("One of the device fields is missing.");
+                return;
+            }
+
+            if (in_param_name.value == "" || in_min_value.value == "" || in_max_value.value == "" || in_treshold.value == "") {
+                alert("One of the parameter fields is missing or wrong.");
+                return;
+            }
+
+            try {
+                const response = await fetch("{{url_for('api_edit_device')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: in_name.value,
+                        description: in_description.value,
+                        param_name: in_param_name.value,
+                        min_value: in_min_value.value,
+                        max_value: in_max_value.value,
+                        kpi: in_kpi.value,
+                        ok_if: in_ok_if.value,
+                        treshold: in_treshold.value,
+                        device_id: parseInt(dev_id.innerHTML),
+                        param_id: parseInt(param_id.innerHTML)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/manage-devices";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+    </script>
 </body>
 </html>
 
 <script>
     const kpi_button = document.querySelector("#kpi");
     const ok_if_button = document.querySelector("#ok-if");
-    const remove_param_button = document.querySelector("#remove-param");
-    remove_param_button.addEventListener("click", removeParameter);
     kpi_button.addEventListener("click", updateButton);
     ok_if_button.addEventListener("click", updateButton_ok);
 

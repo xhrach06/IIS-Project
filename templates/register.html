@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{url_for('static', filename='style/register.css')}}" rel="stylesheet">
 </head>
+<style>
+
+    .navbar{
+        background-color: rgb(78, 83, 124);
+        border-bottom: 5px solid rgb(219, 194,166);
+    }
+</style>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <button onclick="redirectToPage('/home')" class="btn btn-light" type="button">Back</button>
+    </nav>
     <div class="register-container">
         <div class="register-form">
             <h1>Sign Up</h1>
@@ -31,15 +42,17 @@
                 <label for="repeat-password">Repeat Password</label>
                 <input type="password" id="repeat-password" name="repeat-password" required>
             </div>
-            <div class="checkbox-container">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Remember me</label>
-            </div>
-            <div class="button-container">
-                <button id="submit-button" type="button">Sign Up</button>
-            </div>
+            <button id="submit-button" class="btn btn-light w-50" type="button">Confirm</button>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+    </script>
     <script>
         let button = document.getElementById("submit-button");
         let in_name = document.getElementById("name");

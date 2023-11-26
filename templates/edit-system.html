@@ -121,27 +121,52 @@
 
 <script>
 
-function removeDevice(event){
+function removeDevice(event) {
     var deviceContainer = event.target.closest('.device-container');
+    var deviceName = deviceContainer.querySelector('p').textContent;
+    var dropdown = document.getElementById("dropdown-device");
+    var option = document.createElement("option");
+    var devices = {{ devices | tojson | safe }};
+    for(var i = 0; i < devices.length; i++) {
+        if (devices[i][1] == deviceName) {
+            var deviceIDVal = devices[i][0];
+            var deviceNameVal = devices[i][1];
+            var deviceDescriptionVal = devices[i][2];
+            break;
+        }
+    }
+    option.value = deviceIDVal;
+    option.text = deviceNameVal;
+    dropdown.appendChild(option);
+    // Remove the device container
     deviceContainer.remove();
 }
 
 function addDevice() {
-    var selectedDevice = document.getElementById("dropdown-device").value;
-    // Check if the selected value is "default"
+    var devices = {{ devices | tojson | safe }};
+    var dropdown = document.getElementById("dropdown-device");
+    var selectedDevice = dropdown.value;
     if (selectedDevice === "default") {
         return; // Do nothing if the selected value is "default"
+    }
+    for(var i = 0; i < devices.length; i++) {
+        if (devices[i][0] == selectedDevice) {
+            var deviceIDVal = devices[i][0];
+            var deviceNameVal = devices[i][1];
+            var deviceDescriptionVal = devices[i][2];
+            break;
+        }
     }
     var device = document.getElementById("dropdown-device").value;
     var deviceContainer = document.createElement("div");
     deviceContainer.className = "device-container";
-    deviceContainer.id = device;
     var deviceName = document.createElement("p");
-    deviceName.textContent  = document.getElementById(device).children[0].innerHTML;
+    deviceName.textContent = deviceNameVal;
     var deviceDescription = document.createElement("p");
-    deviceDescription.textContent  = document.getElementById(device).children[1].innerHTML;
+    deviceDescription.textContent  = deviceDescriptionVal;
     var removeButton = document.createElement("button");
     removeButton.textContent = "Remove";
+    removeButton.type = "button"; 
     removeButton.onclick = removeDevice;
     deviceContainer.appendChild(deviceName);
     deviceContainer.appendChild(deviceDescription);
@@ -157,5 +182,13 @@ function addDevice() {
             // If no existing .param-container, just append it to the form
             form.appendChild(deviceContainer);
         }
+    // Remove the selected option from the dropdown
+    for (var i = 0; i < dropdown.options.length; i++) {
+        if (dropdown.options[i].value === selectedDevice) {
+            dropdown.remove(i);
+            break;
+        }
+    }
 }
+
 </script>

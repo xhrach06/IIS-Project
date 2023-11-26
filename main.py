@@ -6,6 +6,7 @@ from flask_mysqldb import MySQL
 # TODO: admin page
 # TODO: broker
 # TODO: add delete device, system
+# TODO: sesion timeout
 
 
 app = Flask(__name__)
@@ -19,15 +20,15 @@ app.config['MYSQL_DB'] = 'iis'
 
 mysql = MySQL(app)
 
-def dbQueryEscaped(query, data):
-    cur = mysql.connection.cursor()
+print(mysql)
+
+def dbQueryEscaped(query, data, cur):
     cur.execute(query, data)
     dbresponse = cur.fetchall()
     cur.close()
     return dbresponse
 
-def dbQuery(query):
-    cur = mysql.connection.cursor()
+def dbQuery(query, cur):
     cur.execute(query)
     dbresponse = cur.fetchall()
     cur.close()
@@ -40,9 +41,10 @@ def index():
     if "user_id" in session:
         return render_template("logged-home.html");
     else:
+        cur = mysql.connection.cursor()
         response = dbQuery("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date FROM systems
             LEFT JOIN (SELECT system_id, COUNT(system_id) as dev_count FROM device_systems GROUP BY system_id) AS device_count
-            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id;""")
+            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id;""", cur)
         return render_template("not-logged.html", systems=response);
 
 
@@ -64,7 +66,8 @@ def register():
 @app.route("/profile")
 def profile():
     if "user_id" in session:
-        response = dbQueryEscaped("SELECT first_name,last_name,email,registration_date FROM user WHERE user_id=%s;", [session["user_id"]])
+        cur = mysql.connection.cursor()
+        response = dbQueryEscaped("SELECT first_name,last_name,email,registration_date FROM user WHERE user_id=%s;", [session["user_id"]], cur)
         return render_template("profile.html", profile=response)
     return redirect(url_for('login'))
 
@@ -72,7 +75,8 @@ def profile():
 @app.route("/edit-profile")
 def edit_profile():
     if "user_id" in session:
-        response = dbQueryEscaped("SELECT first_name,last_name,email FROM user WHERE user_id=%s;", [session["user_id"]])
+        cur = mysql.connection.cursor()
+        response = dbQueryEscaped("SELECT first_name,last_name,email FROM user WHERE user_id=%s;", [session["user_id"]], cur)
         return render_template("edit-profile.html", profile=response)
     return redirect(url_for('login'))
 
@@ -94,9 +98,10 @@ def change_password():
 @app.route("/manage-devices")
 def manage_devices():
     if "user_id" in session:
+        cur = mysql.connection.cursor()
         response = dbQueryEscaped("""SELECT device.name, description, parameter.name, 
                                     kpi_on_off, ok_if, kpi_treshold, current_value, device.device_id FROM device, parameter 
-                                  WHERE user_id=%s AND device.device_id=parameter.device_id;""", [session["user_id"]])
+                                  WHERE user_id=%s AND device.device_id=parameter.device_id;""", [session["user_id"]], cur)
         data = []
         for r in response:
             dev = []
@@ -120,9 +125,10 @@ def manage_devices():
 @app.route("/systems")
 def systems():
     if "user_id" in session:
+        cur = mysql.connection.cursor()
         response = dbQuery("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date FROM systems
             LEFT JOIN (SELECT system_id, COUNT(system_id) as dev_count FROM device_systems GROUP BY system_id) AS device_count
-            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id;""")
+            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id;""", cur)
         return render_template("show-all-systems.html", systems=response)
     return redirect(url_for('index'))
 
@@ -130,9 +136,10 @@ def systems():
 @app.route("/my-systems")
 def my_systems():
     if "user_id" in session:
+        cur = mysql.connection.cursor()
         response = dbQueryEscaped("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date FROM systems
             LEFT JOIN (SELECT system_id, COUNT(system_id) as dev_count FROM device_systems GROUP BY system_id) AS device_count
-            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id WHERE systems.user_id=%s;""", [session["user_id"]])
+            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id WHERE systems.user_id=%s;""", [session["user_id"]], cur)
         data = []
         for system in response:
             data_one = []
@@ -142,8 +149,9 @@ def my_systems():
             data_one.append(system[3])
             data_one.append(system[4])
             data_one.append(system[5])
+            cur = mysql.connection.cursor()
             res = dbQueryEscaped("""SELECT kpi_on_off, ok_if, kpi_treshold, current_value FROM parameter p, device d, device_systems s 
-                                    WHERE d.device_id=s.device_id AND p.device_id=d.device_id AND s.system_id=%s;""", [system[0]])
+                                    WHERE d.device_id=s.device_id AND p.device_id=d.device_id AND s.system_id=%s;""", [system[0]], cur)
             print(res)
             is_ok = 1
             for param in res:
@@ -163,7 +171,8 @@ def my_systems():
 @app.route("/add-system")
 def add_system():
     if "user_id" in session:
-        response = dbQueryEscaped("SELECT device_id, name, description FROM device WHERE user_id=%s;", [session["user_id"]])
+        cur = mysql.connection.cursor()
+        response = dbQueryEscaped("SELECT device_id, name, description FROM device WHERE user_id=%s;", [session["user_id"]], cur)
         return render_template("add-system.html", devices=response)
     return redirect(url_for('index'))
 
@@ -180,11 +189,13 @@ def edit_device():
     if "user_id" in session:
         device_id = request.args.get("device_id", default=None, type=int)
         if (device_id != None):
-            response = dbQueryEscaped("SELECT user_id FROM device WHERE device_id=%s;", [device_id])
+            cur = mysql.connection.cursor()
+            response = dbQueryEscaped("SELECT user_id FROM device WHERE device_id=%s;", [device_id], cur)
             if (len(response) > 0 and response[0][0] == session["user_id"]):
+                cur = mysql.connection.cursor()
                 response = dbQueryEscaped("""SELECT d.name, d.description, p.name, p.max_value, p.min_value, p.kpi_on_off, p.ok_if,
                                  p.kpi_treshold,d.device_id,p.param_id FROM
-                                device d, parameter p WHERE d.device_id=p.device_id AND d.device_id=%s""", [device_id])
+                                device d, parameter p WHERE d.device_id=p.device_id AND d.device_id=%s""", [device_id], cur)
                 kpi_data = []
                 if (response[0][5]):
                     kpi_data.append("KPI ON")
@@ -210,12 +221,14 @@ def show_system():
     if "user_id" in session:
         sys_id = request.args.get("sys_id", default=None, type=int)
         if (sys_id != None):
-            response = dbQueryEscaped("SELECT user_id FROM systems WHERE system_id=%s;", [sys_id])
+            cur = mysql.connection.cursor()
+            response = dbQueryEscaped("SELECT user_id FROM systems WHERE system_id=%s;", [sys_id], cur)
             if (len(response) > 0 and response[0][0] == session["user_id"]):
+                cur = mysql.connection.cursor()
                 response = dbQueryEscaped("""SELECT device.name, description, parameter.name, kpi_on_off, ok_if, kpi_treshold, current_value, device.device_id
                                  FROM device, parameter, device_systems 
                                   WHERE device.device_id=parameter.device_id AND device_systems.system_id=%s 
-                                  AND device.device_id=device_systems.device_id;""", [sys_id])
+                                  AND device.device_id=device_systems.device_id;""", [sys_id], cur)
                 print(response)
                 data = []
                 for r in response:
@@ -243,12 +256,16 @@ def manage_system():
     if "user_id" in session:
         sys_id = request.args.get("sys_id", default=None, type=int)
         if (sys_id != None):
-            response = dbQueryEscaped("SELECT user_id FROM systems WHERE system_id=%s;", [sys_id])
+            cur = mysql.connection.cursor()
+            response = dbQueryEscaped("SELECT user_id FROM systems WHERE system_id=%s;", [sys_id], cur)
             if (len(response) > 0 and response[0][0] == session["user_id"]):
-                response = dbQueryEscaped("SELECT device_id, name, description FROM device WHERE user_id=%s;", [session["user_id"]])
+                cur = mysql.connection.cursor()
+                response = dbQueryEscaped("SELECT device_id, name, description FROM device WHERE user_id=%s;", [session["user_id"]], cur)
+                cur = mysql.connection.cursor()
                 response2 = dbQueryEscaped("""SELECT device.device_id, name, description FROM device, device_systems 
-                                            WHERE device.device_id=device_systems.device_id AND device_systems.system_id=%s;""", [sys_id])
-                response3 = dbQueryEscaped("SELECT name, description, system_id FROM systems WHERE system_id=%s;", [sys_id])
+                                            WHERE device.device_id=device_systems.device_id AND device_systems.system_id=%s;""", [sys_id], cur)
+                cur = mysql.connection.cursor()
+                response3 = dbQueryEscaped("SELECT name, description, system_id FROM systems WHERE system_id=%s;", [sys_id], cur)
                 print(response)
                 print(response2)
                 return render_template("edit-system.html", devices=response, sys_devices=response2, system=response3)
@@ -300,7 +317,8 @@ def api_reg():
 @app.route("/api/login", methods=["POST"])
 def api_login():
     form_data = request.get_json()
-    response = dbQueryEscaped("SELECT user_id, password FROM user WHERE email=%s;", [form_data["email"]])
+    cur = mysql.connection.cursor()
+    response = dbQueryEscaped("SELECT user_id, password FROM user WHERE email=%s;", [form_data["email"]], cur)
     if (len(response) > 0):
         if (check_password_hash(response[0][1], form_data["password"])):
             session["user_id"] = response[0][0]
@@ -311,7 +329,8 @@ def api_login():
 @app.route("/api/change-password", methods=["POST"])
 def api_change_password():
     form_data = request.get_json()
-    response = dbQueryEscaped("SELECT password FROM user WHERE user_id=%s;", [session["user_id"]])
+    cur = mysql.connection.cursor()
+    response = dbQueryEscaped("SELECT password FROM user WHERE user_id=%s;", [session["user_id"]], cur)
     print(response)
     print(request.get_json())
     if (len(response) > 0):
@@ -378,7 +397,8 @@ def api_add_system():
 @app.route("/api/edit-system", methods=["POST"])
 def api_edit_system():
     form_data = request.get_json()
-    response = dbQueryEscaped("SELECT user_id FROM systems WHERE system_id=%s", [form_data["system_id"]])
+    cur = mysql.connection.cursor()
+    response = dbQueryEscaped("SELECT user_id FROM systems WHERE system_id=%s", [form_data["system_id"]], cur)
     if (len(response)>0 and response[0][0] != session["user_id"]):
         return {"error": True, "message": "Unauthorized."}
     
@@ -405,7 +425,8 @@ def api_edit_system():
 @app.route("/api/edit-device", methods=["POST"])
 def api_edit_device():
     form_data = request.get_json()
-    response = dbQueryEscaped("SELECT user_id FROM device WHERE device_id=%s", [form_data["device_id"]])
+    cur = mysql.connection.cursor()
+    response = dbQueryEscaped("SELECT user_id FROM device WHERE device_id=%s", [form_data["device_id"]], cur)
     if (len(response)>0 and response[0][0] != session["user_id"]):
         return {"error": True, "message": "Unauthorized."}
 
@@ -468,12 +489,15 @@ def api_delete_profile():
 def api_update():
     form_data = request.get_json()
     print(form_data)
-    response = dbQueryEscaped("SELECT user_id, password FROM user WHERE email=%s;", [form_data["email"]])
+    cur = mysql.connection.cursor()
+    response = dbQueryEscaped("SELECT user_id, password FROM user WHERE email=%s;", [form_data["email"]], cur)
     if (len(response) > 0):
         if (check_password_hash(response[0][1], form_data["password"])):
             user_id = response[0][0]
-            response = dbQueryEscaped("SELECT user_id, device_id FROM device WHERE device_id=%s;", [form_data["device_id"]])
-            param_res = dbQueryEscaped("SELECT min_value, max_value FROM device d,parameter p WHERE d.device_id=%s AND d.device_id=p.device_id;", [form_data["device_id"]])
+            cur = mysql.connection.cursor()
+            response = dbQueryEscaped("SELECT user_id, device_id FROM device WHERE device_id=%s;", [form_data["device_id"]], cur)
+            cur = mysql.connection.cursor()
+            param_res = dbQueryEscaped("SELECT min_value, max_value FROM device d,parameter p WHERE d.device_id=%s AND d.device_id=p.device_id;", [form_data["device_id"]], cur)
             print(user_id)
             if (len(response) > 0):
                 if (response[0][0] == user_id):

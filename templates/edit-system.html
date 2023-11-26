@@ -77,7 +77,10 @@
         async function send_form() {
             let deviceElements = document.getElementsByClassName("device-container");
             let device_ids = [];
-
+            if (deviceElements.length == 0) {
+                alert("Please add at least one device.");
+                return;
+            }
             for (let i = 0; i < deviceElements.length; i++) {
                 if (!device_ids.includes(parseInt(deviceElements[i].id))) {
                     device_ids.push(parseInt(deviceElements[i].id))
@@ -160,6 +163,7 @@ function addDevice() {
     var device = document.getElementById("dropdown-device").value;
     var deviceContainer = document.createElement("div");
     deviceContainer.className = "device-container";
+    deviceContainer.id = deviceIDVal;
     var deviceName = document.createElement("p");
     deviceName.textContent = deviceNameVal;
     var deviceDescription = document.createElement("p");
@@ -174,7 +178,7 @@ function addDevice() {
     document.getElementsByClassName("edit-form")[0].appendChild(deviceContainer);
     var form = document.querySelector('.device-form');
     var lastDevContainer = form.querySelector('.device-container:last-child');
-
+    
         if (lastDevContainer) {
             // If there's an existing .param-container, insert the new one after it
             form.insertBefore(deviceContainer, lastDevContainer.nextSibling);
@@ -190,5 +194,4 @@ function addDevice() {
         }
     }
 }
-
 </script>

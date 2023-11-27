@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, session, redirect, url_for, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mysqldb import MySQL
+from datetime import timedelta
 
 # TODO: sharing systems in DB
 # TODO: admin page
@@ -20,7 +21,6 @@ app.config['MYSQL_DB'] = 'iis'
 
 mysql = MySQL(app)
 
-print(mysql)
 
 def dbQueryEscaped(query, data, cur):
     cur.execute(query, data)
@@ -33,6 +33,13 @@ def dbQuery(query, cur):
     dbresponse = cur.fetchall()
     cur.close()
     return dbresponse
+
+# timeouts session after 10 minutes of inactivity
+@app.before_request
+def before_request():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=10)
+    session.modified = True
 
 
 @app.route("/")

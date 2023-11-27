@@ -8,9 +8,9 @@ app = Flask(__name__)
 
 app.secret_key = b'7s86sd5fsd567fs5678'
 
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config['MYSQL_USER'] = 'iis'
-app.config['MYSQL_PASSWORD'] = 'iis'
+app.config['MYSQL_HOST'] = 'iisiotproject.mysql.database.azure.com'
+app.config['MYSQL_USER'] = 'sanmiguel'
+app.config['MYSQL_PASSWORD'] = 'Kokos123.'
 app.config['MYSQL_DB'] = 'iis'
 
 mysql = MySQL(app)

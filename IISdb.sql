@@ -25,8 +25,8 @@ CREATE TABLE parameter(
   name varchar(64),
   max_value INT NOT NULL,
   min_value INT NOT NULL,
-  kpi_on_off INT DEFAULT 0, -- 0=off, 1=on
-  ok_if INT NOT NULL, -- 0=lower, 1=higher
+  kpi_on_off INT DEFAULT 0,
+  ok_if INT NOT NULL,
   kpi_treshold DOUBLE NOT NULL,
   current_value INT,
   device_id INT,

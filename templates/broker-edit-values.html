@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Broker</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 
@@ -66,7 +66,7 @@
 <body>
     <!-- Top Navigation for Profile and Logout -->
     <nav class="navbar navbar-expand-lg navbar-light">
-        <button class="btn btn-light" type="button">Back</button>
+        <button class="btn btn-light" onclick="redirectToPage('/logout')" type="button">Logout</button>
         <div class="navbar-nav ml-auto">  
         </div>
     </nav>
@@ -76,72 +76,56 @@
     <div class="container">
         <div class="row">
             <!-- Example of a single system card -->
-            <div class="col-lg-12" style="margin-bottom: 10px;">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-2 d-flex align-items-center justify-content-center vertical-divider">    
-                            <div class="device-name" style="font-size: large;">Temperature</div>
+            {% for device in devices %}
+                <div class="col-lg-12" style="margin-bottom: 10px;">
+                    <div class="card">
+                    <!-- Centered device name on top of the card -->
+                    <div class="row">  
+                        <div class="col-6" style="padding-left:0;border-right: 2px solid rgb(219, 194, 166);">
+                            <div class="centered-text device-name">
+                                <span>Name:</span>
+                                <span style="color: white;">{{device[0]}}</span>
+                            </div>
                         </div>
-                        <div class="col-2 d-flex align-items-center justify-content-stard vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">Min Value:</div>
-                            <div class="card-text">&ThickSpace; -5</div>  
+                        <div class="col-6" style="padding-right:0;">
+                            <div class="centered-text device-name">
+                                <span>Parameter type:</span>
+                                <span style="color: white;">{{device[1]}}</span>
+                            </div>
                         </div>
-                        <div class="col-2 d-flex align-items-center justify-content-start vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">Max Value: </div>
-                            <div class="card-text">&ThickSpace; 2165</div>
-                        </div>
-                        <div class="col-3 d-flex align-items-center justify-content-start vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">Current Value: </div>
-                            <div class="card-text">&ThickSpace; 458</div>
-                        </div>
-                        <div class="col-2 d-flex align-items-center justify-content-start vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">New Value:&ThickSpace; </div>
-                            <input type="text" class="form-control" id="newValue" style="width: 56px;" >
-                        </div>        
-                        <div class="col-1 d-flex align-items-center justify-content-center">
-                            <button class="btn btn-light" type="button" style="margin-right: 10px;">Enter</button>
-                        </div>    
                     </div>
-                </div>
-            </div>
 
-            <div class="col-lg-12" style="margin-bottom: 10px;">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-2 d-flex align-items-center justify-content-center vertical-divider">    
-                            <div class="device-name" style="font-size: large;">Temperature</div>
+                        
+                        <div class="row">
+                            <!-- Owner Email in the first column -->
+                            <div class="col-3 d-flex align-items-center justify-content-center vertical-divider">    
+                                <div class="card-text" style="color:rgb(219, 194, 166);">Owner:</div>
+                                <div class="card-text">&ThickSpace; {{device[2]}}</div>  
+                            </div>
+                            <div class="col-2 d-flex align-items-center justify-content-stard vertical-divider">    
+                                <div class="card-text" style="color:rgb(219, 194, 166);">Min Value:</div>
+                                <div class="card-text">&ThickSpace; {{device[3]}}</div>  
+                            </div>
+                            <div class="col-2 d-flex align-items-center justify-content-start vertical-divider">    
+                                <div class="card-text" style="color:rgb(219, 194, 166);">Max Value: </div>
+                                <div class="card-text">&ThickSpace; {{device[4]}}</div>
+                            </div>
+                            <div class="col-2 d-flex align-items-center justify-content-start vertical-divider">    
+                                <div class="card-text" style="color:rgb(219, 194, 166);">Current: </div>
+                                <div class="card-text">&ThickSpace; {{device[5]}}</div>
+                            </div>
+                            <div class="col-2 d-flex align-items-center justify-content-start vertical-divider">    
+                                <div class="card-text" style="color:rgb(219, 194, 166);">New Value:&ThickSpace; </div>
+                                <input type="text" class="form-control" name="newValue" style="width: 56px;" >
+                            </div>        
+                            <div class="col-1 d-flex align-items-center justify-content-center">
+                                <button class="btn btn-light" onclick="send_form(this, '{{device[6]}}')" type="button" style="margin-right: 10px;">Enter</button>
+                            </div>    
                         </div>
-                        <div class="col-2 d-flex align-items-center justify-content-stard vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">Min Value:</div>
-                            <div class="card-text">&ThickSpace; -5</div>  
-                        </div>
-                        <div class="col-2 d-flex align-items-center justify-content-start vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">Max Value: </div>
-                            <div class="card-text">&ThickSpace; 2165</div>
-                        </div>
-                        <div class="col-3 d-flex align-items-center justify-content-start vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">Current Value: </div>
-                            <div class="card-text">&ThickSpace; 458</div>
-                        </div>
-                        <div class="col-2 d-flex align-items-center justify-content-start vertical-divider">    
-                            <div class="card-text" style="color:rgb(219, 194, 166);">New Value:&ThickSpace; </div>
-                            <input type="text" class="form-control" id="newValue" style="width: 56px;" >
-                        </div>        
-                        <div class="col-1 d-flex align-items-center justify-content-center">
-                            <button class="btn btn-light" type="button" style="margin-right: 10px;">Enter</button>
-                        </div>    
                     </div>
+                    
                 </div>
-            </div>
-            <!-- ... repeat for additional cards ... -->
-        </div>
-    </div>
-
-
-
-
-
- 
+            {% endfor %}
             <!-- ... repeat for additional cards ... -->
         </div>
     </div>
@@ -150,5 +134,44 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+    </script>
+    <script>
+
+        async function send_form(button, param_id) {
+            in_new = button.parentElement.parentElement.children[4].children[1];
+
+            if (in_new.value == "") {
+                alert("One of the fields is missing.");
+                return;
+            }
+
+            try {
+                const response = await fetch("{{url_for('api_broker')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        value: parseInt(in_new.value),
+                        param_id: parseInt(param_id)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/broker";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+    </script>
 </body>
 </html>

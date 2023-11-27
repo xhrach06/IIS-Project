@@ -5,10 +5,6 @@ from datetime import timedelta
 
 # TODO: sharing systems in DB
 # TODO: admin page
-# TODO: broker
-# TODO: add delete device, system
-# TODO: sesion timeout
-
 
 app = Flask(__name__)
 
@@ -33,6 +29,7 @@ def dbQuery(query, cur):
     dbresponse = cur.fetchall()
     cur.close()
     return dbresponse
+
 
 # timeouts session after 10 minutes of inactivity
 @app.before_request
@@ -293,10 +290,26 @@ def sharing_options():
     return redirect(url_for('index'))
 
 
+@app.route("/broker")
+def broker():
+    print(session["broker"])
+    if "broker" in session:
+        cur = mysql.connection.cursor()
+        response = dbQuery("""SELECT d.name, p.name, u.email, p.min_value, p.max_value, p.current_value, p.param_id
+                                 FROM device d, user u, parameter p
+                                WHERE d.user_id=u.user_id AND p.device_id=d.device_id""", cur)
+        return render_template("broker-edit-values.html", devices=response)
+    return redirect(url_for('index'))
+
+
 @app.route("/logout")
 def logout():
     if "user_id" in session:
         session.pop('user_id', None)
+    if "broker" in session:
+        session.pop('broker', None)
+    if "admin" in session:
+        session.pop('admin', None)
     return redirect(url_for('index'))
 
 
@@ -332,10 +345,15 @@ def api_reg():
 def api_login():
     form_data = request.get_json()
     cur = mysql.connection.cursor()
-    response = dbQueryEscaped("SELECT user_id, password FROM user WHERE email=%s;", [form_data["email"]], cur)
+    response = dbQueryEscaped("SELECT user_id, password, is_admin, is_broker FROM user WHERE email=%s;", [form_data["email"]], cur)
     if (len(response) > 0):
         if (check_password_hash(response[0][1], form_data["password"])):
-            session["user_id"] = response[0][0]
+            if (response[0][2] == 1):
+                session["admin"] = True
+            elif (response[0][3] == 1):
+                session["broker"] = True
+            else:           
+                session["user_id"] = response[0][0]
             return {"error": False}
     return {"error": True, "message": "Email or password is wrong."}
 
@@ -533,6 +551,31 @@ def api_update():
                     return {"error": False}
             return {"error": True, "message": "Device doesn't exist or isn't yours."}
     return {"error": True, "message": "Email or password is wrong."}
+
+@app.route("/api/broker", methods=["POST"])
+def api_broker():
+    form_data = request.get_json()
+    print(form_data)
+    cur = mysql.connection.cursor()
+    param_res = dbQueryEscaped("SELECT min_value, max_value FROM parameter WHERE parameter.param_id=%s;", [form_data["param_id"]], cur)
+    if (len(param_res) > 0):
+        value = form_data["value"]
+        if (value < param_res[0][0]):
+            value = param_res[0][0]
+        if (value > param_res[0][1]):
+            value = param_res[0][1]
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("UPDATE parameter SET current_value=%s WHERE param_id=%s;",[value,form_data["param_id"]])
+            mysql.connection.commit()
+            cur.close()
+        except Exception as e:
+            error_code = e.args[0] if e.args else None
+            print(e)
+            cur.close()
+            return {"error": True, "message": "Unknown error."}
+        return {"error": False}
+    return {"error": True, "message": "Device doesn't exist."}
 
 
 if __name__ == "__main__":

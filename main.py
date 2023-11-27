@@ -374,6 +374,10 @@ def admin_edit_profile():
     return redirect(url_for('index'))
 
 
+@app.route("/video")
+def video():
+    return redirect("http://www.youtube.com")
+
 @app.route("/logout")
 def logout():
     if "user_id" in session:

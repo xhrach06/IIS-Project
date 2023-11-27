@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0067)https://www.fit.vutbr.cz/study/courses/IIS/private/projekt/doc.html -->
+<html><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><style lang="en" type="text/css" id="dark-mode-native-sheet"></style><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2">
+    
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>IoT: správa zařízení</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>První jméno <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xbrnak01@stud.fit.vutbr.cz">xbrnak01@stud.fit.vutbr.cz</a> -
+		Front-end, back-end development, hosting
+	</dd>
+	<dd>Druhé jméno <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xzelin26@stud.fit.vutbr.cz">xzelin26@stud.fit.vutbr.cz</a> - 
+		Front-end development, Back-end development
+	</dd>
+  <dd>Třetí jméno <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xhrach06@stud.fit.vutbr.cz">xhrach06@stud.fit.vutbr.cz</a> - 
+		Back-end development, Front-end development, dokumentácia
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="http://www.stud.fit.vutbr.cz/~xautor01/IIS">http://www.stud.fit.vutbr.cz/~xautor01/IIS</a></dd>
+	<!-- <dd>(pokud má aplikace více vstupních stránek, napište obdobně další URL)</dd> -->
+</dl>
+
+<h2>Uživatelé systému pro testování</h2>
+<p>Uveďte prosím existující zástupce <strong>všech rolí uživatelů</strong>.</p>
+<table>
+<tbody><tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin</td><td>adminpwd</td><td>Administrátor</td></tr>
+<tr><td>broker</td><td>brokerpwd</td><td>Broker</td></tr>
+<tr><td>user</td><td>userpwd</td><td>Registrovaný užívateľ</td></tr>
+</tbody></table>
+
+<!-- <p>(Diagram případů užití není nutné vkládat, pokud IS implementuje role a případy užití definované zadáním.)</p> -->
+
+<h3>Video</h3>
+
+<p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p> 
+
+<h2>Implementace</h2>
+<p>
+	V súbore main.py je implementované routovanie a API, v súbore IISdb.sql je script na vytvorenie databázy a v súbore
+	templates je implementované HTML rozhranie.
+</p>
+
+<h3>Databáze</h3>
+
+Zde vložte grafické schéma relační databáze (tabulek v databázi).
+
+<h2>Instalace</h2>
+
+Stručně popište: 
+<ul>
+<li>postup instalace na server,</li>
+<li>softwarové požadavky: Python 3.10.12, Flask 3.0.0, Werkzeug 3.0.1, mysql  Ver 8.0.35-0ubuntu0.22.04.1</li>
+<li>jak rozbalit, konfigurovat, inicializovat databázi, jak spustit aplikaci...</li>
+<li>Lokálne spustenie:</li>
+<li>Rozbalte súbor xbrnak01.zip</li>
+<li>V termináli sa presuňte do priečinka IIS-Project</li>
+<li>Môžte využiť python3 virtual enviroment</li>
+<li>Spustite príkaz python3 main.py</li>
+<li>Otvorte si v prehliadači stránku http://127.0.0.1:5000 </li>
+<li>Pre ukončenie aplikácie stlačte Ctrl+C</li>
+</ul>
+
+<h2>Známé problémy</h2>
+<p>Zde popište, které body zadání nejsou implementovány a z jakého důvodu. Např. &#8222;Z časových důvodů nebyla implementována správa uživatelů.&#8221; Pomůžete tím zrychlit hodnocení, když neimplementované funkce nebudeme muset dlouze hledat.</p>
+
+
+
+</body></html>

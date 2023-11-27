@@ -176,6 +176,13 @@ def add_system():
         return render_template("add-system.html", devices=response)
     return redirect(url_for('index'))
 
+@app.route("/admin-user-view")
+def add_user():
+    if "user_id" in session:
+        cur = mysql.connection.cursor()
+        response = dbQueryEscaped("SELECT user_id, first_name, last_name, email FROM user",None,cur)
+        return render_template("admin-user-view.html", users=response)
+    return redirect(url_for('index'))
 
 @app.route("/my-device")
 def my_device():

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Devices </title>
+        <!-- <link rel="stylesheet" href="{{url_for('static', filename='style/admin-user-view.css')}}"> -->
+        <link rel="stylesheet" href="../static/style/admin-user-view.css">
+        <!-- <link rel="stylesheet" href="{{url_for('static', filename='style/header.css')}}"> -->
+        <link rel="stylesheet" href="../static/style/header.css">
+        <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
+    </head>
+<body>
+    <div id="header">
+        <img src = "./images/logo.png" alt = "logo">
+        <nav>
+            <ul>
+                <a href="homepage.html"><li>Home</li></a>
+                <a href="devices.html"><li>Devices</li></a>
+                <a href="systems.html"><li>Systems</li></a>
+            </ul>
+        </nav>
+    <a href="profile.html"><img src = "./images/person.jpg" alt = "profile"></a>
+    </div>
+    <div class="main">
+        <div class="profiles">
+            {% for user in users %}
+            <div class="profile">
+                <div class="profile-info" id={{user[0]}}>
+                    
+                    <div class="profile-name">
+                        <h2>{{user[1]}}  {{user[2]}}</h2> 
+                    </div>
+                    <div class="profile-detail">
+                        <ul> 
+                            <li>Email: {{user[3]}}</li>
+                        </ul>
+                    </div>
+                    <div class="profile-buttons">
+                        <div class="dev-info-button">
+                            <a href="profile.html"><button class="profile-button-info">Info</button></a>
+                        </div>
+                        <div class="edit-button">
+                            <a href="edit-user.html"><button>Edit</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+</body>

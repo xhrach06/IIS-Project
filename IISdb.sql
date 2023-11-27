@@ -33,7 +33,7 @@ CREATE TABLE parameter(
   FOREIGN KEY (device_id) REFERENCES device(device_id) ON DELETE CASCADE
 );
 
---This trigger automatically sets current_value to the value of min_value for each new row inserted into the table.
+
 CREATE TRIGGER set_current_value
 BEFORE INSERT ON parameter
 FOR EACH ROW

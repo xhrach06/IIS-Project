@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{url_for('static', filename='style/register.css')}}" rel="stylesheet">
+</head>
+<body>
+
+
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+
+        <button class="btn btn-light" onclick="redirectToPage('/admin')" type="button">Back</button>      
+    </nav>
+
+    <div class="register-container">
+        <div class="register-form">
+            <h1>Edit User</h1>
+            <p>Please fill in this form to edit an account.</p>
+            <hr>
+            <div class="input-container">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value={{profile[0][0]}} required>
+            </div>
+            <div class="input-container">
+                <label for="surname">Surname</label>
+                <input type="text" id="surname" name="surname" value={{profile[0][1]}} required>
+            </div>
+            <div class="input-container">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" value={{profile[0][2]}} required>
+            </div>
+
+            <div class="button-container">
+                <button class="btn btn-light w-50" onclick="send_form('{{user_id}}')" type="submit">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+    </script>
+    <script>
+        let in_name = document.getElementById("name");
+        let in_surname = document.getElementById("surname");
+        let in_email = document.getElementById("email");
+
+        async function send_form(user_id) {
+            if (in_name.value=="" || in_surname.value=="" || in_email.value=="") {
+                alert("One of the fields is missing.");
+                return;
+            }
+
+            try {
+                const response = await fetch("{{url_for('api_admin_edit_profile')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        first_name: in_name.value,
+                        last_name: in_surname.value,
+                        email: in_email.value,
+                        user_id: parseInt(user_id)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/admin";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+    </script>
+</body>
+</html>

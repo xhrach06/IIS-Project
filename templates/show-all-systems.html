@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Systems</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 
@@ -61,7 +61,11 @@
                     <div class="card-body d-flex">
                         <div class="col-6 d-flex align-items-center justify-content-center flex-column">
                             <h5 class="card-title m-2">{{system[1]}}</h5>
-                            <button onclick="request_share('{{system[0]}}')" class="btn btn-light" type="button">Request Sharing</button>
+                            {% if system[6] == None %}
+                                <button onclick="send_form('{{system[0]}}')" class="btn btn-light" type="button">Request Sharing</button>
+                            {% else %}
+                                <button onclick="send_form_cancel('{{system[0]}}')" class="btn btn-light" type="button">Cancel Request</button>
+                            {% endif %}
                         </div>
                         <div class="vertical-divider"></div>
                         <div class="col-6">
@@ -88,9 +92,55 @@
         }
     </script>
     <script>
-        function request_share(sys_id) {
-            return;
+        async function send_form(sys_id) {
+            try {
+                const response = await fetch("{{url_for('api_share_request')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        system_id: parseInt(sys_id)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/systems";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
         }
+    </script>
+    <script>
+        async function send_form_cancel(sys_id) {
+            try {
+                const response = await fetch("{{url_for('api_cancel_request')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        system_id: parseInt(sys_id)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/systems";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+
     </script>
 </body>
 </html>

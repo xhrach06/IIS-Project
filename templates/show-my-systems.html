@@ -144,77 +144,37 @@
                 <div class="container mt-4">
                     <div class="row">
                         <!-- Example of a single system card -->
-                        <div class="col-lg-12 col-md-12 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body d-flex">
-                                    <div class="col-6 d-flex align-items-center justify-content-center flex-column">
-                                        <h5 class="card-title m-2">System Name</h5>
+                        {% for system in s_systems %}
+                                <!-- Example of a single system card -->
+                                <div class="col-lg-12 col-md-12 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body d-flex">
+                                            <div class="col-6 d-flex align-items-center justify-content-center flex-column">
+                                                <h5 class="card-title m-2">{{system[1]}}</h5>
+                                                
+                                                    <div class="buttonmargin">
+                                                        <button class="btn btn-light" type="button" onclick="redirectToPage('/show-system?sys_id={{system[0]}}')">Show Devices</button>
+                                                    </div>
                                         
-                                            <div class="buttonmargin">
-                                                <button class="btn btn-light" type="button" onclick="redirectToPage('/show-system')">Show Devices</button>
-                                            </div>
-                                            <button class="btn btn-light" type="button" onclick="redirectToPage('/home')">Manage System</button>
-                                   
 
-                                    </div>
-                                    <div class="vertical-divider"></div>
-                                    <div class="col-6">
-                                        <p class="card-text">Active Devices: 10</p>
-                                        <p class="card-text">Followed Parameters: XYZ</p>
-                                        <p class="card-text">Creation Date: 2023-01-01</p>
-                                        <p class="card-text">Owner: John Doe</p>
+                                            </div>
+                                            <div class="vertical-divider"></div>
+                                            <div class="col-6">
+                                                <p class="card-text">Active Devices: {{system[2]}}</p>
+                                                <p class="card-text">Creation Date: {{system[5]}}</p>
+                                                <p class="card-text">Owner: {{system[3]}} {{system[4]}}</p>
+                                                <p class="card-text">Status:
+                                                    {% if system[6] == 1 %}
+                                                        <span class="rounded-circle bg-success" data-toggle="tooltip" data-placement="top" title="Everything is OK" style="display: inline-block; width: 16px; height: 16px;"></span>
+                                                    {% else %}
+                                                        <span class="rounded-circle bg-danger" data-toggle="tooltip" data-placement="top" title="Everything is OK" style="display: inline-block; width: 16px; height: 16px;"></span>
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                
-                        <div class="col-lg-12 col-md-12 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body d-flex">
-                                    <div class="col-6 d-flex align-items-center justify-content-center flex-column">
-                                        <h5 class="card-title m-2">System Name</h5>
-                                        
-                                            <div class="buttonmargin">
-                                                <button class="btn btn-light" type="button">Show Devices</button>
-                                            </div>
-                                            <button class="btn btn-light" type="button">Manage System</button>
-                                   
-
-                                    </div>
-                                    <div class="vertical-divider"></div>
-                                    <div class="col-6">
-                                        <p class="card-text">Active Devices: 10</p>
-                                        <p class="card-text">Followed Parameters: XYZ</p>
-                                        <p class="card-text">Creation Date: 2023-01-01</p>
-                                        <p class="card-text">Owner: John Doe</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12 col-md-12 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body d-flex">
-                                    <div class="col-6 d-flex align-items-center justify-content-center flex-column">
-                                        <h5 class="card-title m-2">System Name</h5>
-                                        
-                                            <div class="buttonmargin">
-                                                <button class="btn btn-light" type="button">Show Devices</button>
-                                            </div>
-                                            <button class="btn btn-light" type="button">Manage System</button>
-                                   
-
-                                    </div>
-                                    <div class="vertical-divider"></div>
-                                    <div class="col-6">
-                                        <p class="card-text">Active Devices: 10</p>
-                                        <p class="card-text">Followed Parameters: XYZ</p>
-                                        <p class="card-text">Creation Date: 2023-01-01</p>
-                                        <p class="card-text">Owner: John Doe</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            {% endfor %}
                 
                         <!-- Repeat the above div for each system (up to 6 for full screen) -->
                     </div>

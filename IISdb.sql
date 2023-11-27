@@ -58,6 +58,15 @@ CREATE TABLE users_systems(
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE share_request(
+    system_id INT,
+    user_id INT,
+    sent_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, system_id),
+    FOREIGN KEY (system_id) REFERENCES systems(system_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+);
+
 CREATE TABLE device_systems(
     system_id INT,
     device_id INT,

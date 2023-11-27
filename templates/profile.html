@@ -61,6 +61,9 @@
             <button class="btn btn-light" type="button" onclick="redirectToPage('/change-password')">Change Password</button>
             <button class="btn btn-light" type="button" onclick="redirectToPage('/edit-profile')">Edit Profile</button>
             <button class="btn btn-light" type="button" onclick="redirectToPage('/delete-profile')">Delete Profile</button>
+            {% if admin %}
+                <button class="btn btn-light" type="button" onclick="redirectToPage('/admin')">Admin Page</button>
+            {% endif %}
             </div>
 
          

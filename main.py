@@ -3,8 +3,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mysqldb import MySQL
 from datetime import timedelta
 
-# TODO: sharing systems in DB
-# TODO: admin page
 
 app = Flask(__name__)
 
@@ -31,7 +29,7 @@ def dbQuery(query, cur):
     return dbresponse
 
 
-# timeouts session after 10 minutes of inactivity
+# times out session after 10 minutes of inactivity
 @app.before_request
 def before_request():
     session.permanent = True
@@ -42,14 +40,16 @@ def before_request():
 @app.route("/")
 @app.route("/home")
 def index():
+    if "broker" in session:
+        return redirect(url_for('broker'))
     if "user_id" in session:
-        return render_template("logged-home.html");
+        return render_template("logged-home.html")
     else:
         cur = mysql.connection.cursor()
         response = dbQuery("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date FROM systems
             LEFT JOIN (SELECT system_id, COUNT(system_id) as dev_count FROM device_systems GROUP BY system_id) AS device_count
             ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id;""", cur)
-        return render_template("not-logged.html", systems=response);
+        return render_template("not-logged.html", systems=response)
 
 
 @app.route("/login")
@@ -72,7 +72,10 @@ def profile():
     if "user_id" in session:
         cur = mysql.connection.cursor()
         response = dbQueryEscaped("SELECT first_name,last_name,email,registration_date FROM user WHERE user_id=%s;", [session["user_id"]], cur)
-        return render_template("profile.html", profile=response)
+        admin = False
+        if "admin" in session:
+            admin = True
+        return render_template("profile.html", profile=response, admin=admin)
     return redirect(url_for('login'))
 
 
@@ -130,9 +133,21 @@ def manage_devices():
 def systems():
     if "user_id" in session:
         cur = mysql.connection.cursor()
-        response = dbQuery("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date FROM systems
-            LEFT JOIN (SELECT system_id, COUNT(system_id) as dev_count FROM device_systems GROUP BY system_id) AS device_count
-            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id;""", cur)
+        response = dbQueryEscaped("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date, r.system_id
+                                    FROM systems
+                                    LEFT JOIN (
+                                        SELECT system_id, COUNT(system_id) as dev_count
+                                        FROM device_systems
+                                        GROUP BY system_id
+                                    ) AS device_count ON systems.system_id = device_count.system_id
+                                    INNER JOIN user ON systems.user_id = user.user_id
+                                    LEFT JOIN share_request r ON systems.system_id = r.system_id
+                                    WHERE systems.user_id != %s
+                                        AND systems.system_id NOT IN (
+                                            SELECT system_id
+                                            FROM users_systems
+                                            WHERE user_id = %s);""", [session["user_id"], session["user_id"]], cur)
+        print(response)
         return render_template("show-all-systems.html", systems=response)
     return redirect(url_for('index'))
 
@@ -156,7 +171,6 @@ def my_systems():
             cur = mysql.connection.cursor()
             res = dbQueryEscaped("""SELECT kpi_on_off, ok_if, kpi_treshold, current_value FROM parameter p, device d, device_systems s 
                                     WHERE d.device_id=s.device_id AND p.device_id=d.device_id AND s.system_id=%s;""", [system[0]], cur)
-            print(res)
             is_ok = 1
             for param in res:
                 if (param[0] == 1):
@@ -166,9 +180,37 @@ def my_systems():
                         is_ok = 0
             data_one.append(is_ok)
             data.append(data_one)
-        print(data)
-        #print(response)
-        return render_template("show-my-systems.html", systems=data)
+        #print(data)
+
+        cur = mysql.connection.cursor()
+        response2 = dbQueryEscaped("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date FROM systems
+            LEFT JOIN (SELECT system_id, COUNT(system_id) as dev_count FROM device_systems GROUP BY system_id) AS device_count
+            ON systems.system_id=device_count.system_id INNER JOIN user ON systems.user_id=user.user_id 
+            WHERE systems.system_id IN(SELECT system_id FROM users_systems WHERE user_id=%s);""", [session["user_id"]], cur)
+        print(response2)
+        data2 = []
+        for system in response2:
+            data_one2 = []
+            data_one2.append(system[0])
+            data_one2.append(system[1])
+            data_one2.append(system[2])
+            data_one2.append(system[3])
+            data_one2.append(system[4])
+            data_one2.append(system[5])
+            cur = mysql.connection.cursor()
+            res = dbQueryEscaped("""SELECT kpi_on_off, ok_if, kpi_treshold, current_value FROM parameter p, device d, device_systems s 
+                                    WHERE d.device_id=s.device_id AND p.device_id=d.device_id AND s.system_id=%s;""", [system[0]], cur)
+            is_ok = 1
+            for param in res:
+                if (param[0] == 1):
+                    if ((param[1] == 1 and param[2]<param[3]) or (param[1] == 0 and param[2]>param[3])):
+                        is_ok = is_ok
+                    else:
+                        is_ok = 0
+            data_one2.append(is_ok)
+            data2.append(data_one2)
+        print(data2)
+        return render_template("show-my-systems.html", systems=data, s_systems=data2)
     return redirect(url_for('index'))
 
 
@@ -180,13 +222,6 @@ def add_system():
         return render_template("add-system.html", devices=response)
     return redirect(url_for('index'))
 
-@app.route("/admin-user-view")
-def add_user():
-    if "user_id" in session:
-        cur = mysql.connection.cursor()
-        response = dbQueryEscaped("SELECT user_id, first_name, last_name, email FROM user",None,cur)
-        return render_template("admin-user-view.html", users=response)
-    return redirect(url_for('index'))
 
 @app.route("/my-device")
 def my_device():
@@ -234,7 +269,9 @@ def show_system():
         if (sys_id != None):
             cur = mysql.connection.cursor()
             response = dbQueryEscaped("SELECT user_id FROM systems WHERE system_id=%s;", [sys_id], cur)
-            if (len(response) > 0 and response[0][0] == session["user_id"]):
+            cur = mysql.connection.cursor()
+            response2 = dbQueryEscaped("SELECT user_id FROM users_systems WHERE system_id=%s AND user_id=%s;", [sys_id, session["user_id"]], cur)
+            if ((len(response) > 0 and response[0][0] == session["user_id"]) or len(response2) > 0):
                 cur = mysql.connection.cursor()
                 response = dbQueryEscaped("""SELECT device.name, description, parameter.name, kpi_on_off, ok_if, kpi_treshold, current_value, device.device_id
                                  FROM device, parameter, device_systems 
@@ -286,19 +323,54 @@ def manage_system():
 @app.route("/sharing-options")
 def sharing_options():
     if "user_id" in session:
-        return render_template("sharing-options.html")
+        cur = mysql.connection.cursor()
+        #share requests
+        response1 = dbQueryEscaped("""SELECT email, req_system.system_id, req_system.name, req_system.sent_date, req_system.user_id FROM 
+                                (SELECT u.email, r.user_id, r.system_id, s.name, r.sent_date FROM user u, share_request r, systems s
+                                WHERE u.user_id=r.user_id AND r.system_id=s.system_id) AS req_system, systems s
+                                 WHERE s.user_id=%s AND req_system.system_id=s.system_id;""", [session["user_id"]],cur)
+        cur = mysql.connection.cursor()
+        #shared with me
+        response2 = dbQueryEscaped("""SELECT s.name, u.email, r.shared_since, r.system_id FROM systems s, user u, users_systems r
+                                        WHERE u.user_id=s.user_id AND s.system_id=r.system_id AND s.system_id
+                                        IN(SELECT system_id FROM users_systems WHERE user_id=%s);""", [session["user_id"]], cur)
+        cur = mysql.connection.cursor()
+        #shared from me
+        response3 = dbQueryEscaped("""SELECT s.name, u.email, temp.shared_since, temp.system_id, temp.user_id FROM systems s, user u, 
+                                        (SELECT s.system_id, r.user_id, r.shared_since FROM systems s, users_systems r WHERE s.system_id=r.system_id AND s.user_id=%s)
+                                        AS temp WHERE temp.system_id=s.system_id AND temp.user_id=u.user_id;""", [session["user_id"]], cur)
+        print(response3)
+        return render_template("sharing-options.html", requests=response1, shared2me=response2, shared2else=response3)
     return redirect(url_for('index'))
 
 
 @app.route("/broker")
 def broker():
-    print(session["broker"])
     if "broker" in session:
         cur = mysql.connection.cursor()
         response = dbQuery("""SELECT d.name, p.name, u.email, p.min_value, p.max_value, p.current_value, p.param_id
                                  FROM device d, user u, parameter p
                                 WHERE d.user_id=u.user_id AND p.device_id=d.device_id""", cur)
         return render_template("broker-edit-values.html", devices=response)
+    return redirect(url_for('index'))
+
+
+@app.route("/admin")
+def admin():
+    if "admin" in session:
+        cur = mysql.connection.cursor()
+        response = dbQueryEscaped("SELECT user_id, first_name, last_name, email FROM user",None,cur)
+        return render_template("admin-user-view.html", users=response)
+    return redirect(url_for('index'))
+
+
+@app.route("/admin-edit-profile")
+def admin_edit_profile():
+    if "admin" in session:
+        user_id = request.args.get("user_id", default=None, type=int)
+        cur = mysql.connection.cursor()
+        response = dbQueryEscaped("SELECT first_name,last_name,email FROM user WHERE user_id=%s;", [user_id], cur)
+        return render_template("edit-profile-admin.html", profile=response, user_id=user_id)
     return redirect(url_for('index'))
 
 
@@ -350,6 +422,7 @@ def api_login():
         if (check_password_hash(response[0][1], form_data["password"])):
             if (response[0][2] == 1):
                 session["admin"] = True
+                session["user_id"] = response[0][0]
             elif (response[0][3] == 1):
                 session["broker"] = True
             else:           
@@ -552,6 +625,105 @@ def api_update():
             return {"error": True, "message": "Device doesn't exist or isn't yours."}
     return {"error": True, "message": "Email or password is wrong."}
 
+
+@app.route("/api/share-request", methods=["POST"])
+def api_share_request():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("INSERT INTO share_request (system_id, user_id) VALUES (%s,%s);",
+                   [form_data["system_id"], session["user_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
+    return {"error": False}
+
+
+@app.route("/api/cancel-request", methods=["POST"])
+def api_cancel_request():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("DELETE FROM share_request WHERE system_id=%s AND user_id=%s;",
+                   [form_data["system_id"], session["user_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
+    return {"error": False}
+
+
+@app.route("/api/share-decline", methods=["POST"])
+def api_share_decline():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("DELETE FROM share_request WHERE system_id=%s AND user_id=%s;",
+                   [form_data["system_id"], form_data["user_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
+    return {"error": False}
+
+
+@app.route("/api/share-accept", methods=["POST"])
+def api_share_accept():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("DELETE FROM share_request WHERE system_id=%s AND user_id=%s;",
+                   [form_data["system_id"], form_data["user_id"]])
+        cur.execute("INSERT INTO users_systems (system_id, user_id) VALUES (%s, %s);",
+                   [form_data["system_id"], form_data["user_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
+    return {"error": False}
+
+
+@app.route("/api/share-cancel-me", methods=["POST"])
+def api_share_cancel_me():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("DELETE FROM users_systems WHERE system_id=%s AND user_id=%s;",
+                   [form_data["system_id"], session["user_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
+    return {"error": False}
+
+
+@app.route("/api/share-cancel-else", methods=["POST"])
+def api_share_cancel_else():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("DELETE FROM users_systems WHERE system_id=%s AND user_id=%s;",
+                   [form_data["system_id"], form_data["user_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
+    return {"error": False}
+
+
 @app.route("/api/broker", methods=["POST"])
 def api_broker():
     form_data = request.get_json()
@@ -577,6 +749,46 @@ def api_broker():
         return {"error": False}
     return {"error": True, "message": "Device doesn't exist."}
 
+@app.route("/api/admin/delete-profile", methods=["POST"])
+def api_admin_delete_profile():
+    if "admin" in session:
+        form_data = request.get_json()
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("DELETE FROM user WHERE user_id=%s;", [form_data["user_id"]])
+            mysql.connection.commit()
+            cur.close()
+            session.pop('user_id', None)
+        except Exception as e:
+            error_code = e.args[0] if e.args else None
+            print(e)
+            cur.close()
+            return {"error": True, "message": "Unknown error."}
+        return {"error": False}
+    return {"error": True, "message": "Not admin."}
+
+@app.route("/api/admin/edit-profile", methods=["POST"])
+def api_admin_edit_profile():
+    if "admin" in session:
+        form_data = request.get_json()
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("UPDATE user SET first_name=%s, last_name=%s, email=%s WHERE user_id=%s;",
+                    [form_data["first_name"], form_data["last_name"], form_data["email"], form_data["user_id"]])
+            mysql.connection.commit()
+            cur.close()
+        except Exception as e:
+            error_code = e.args[0] if e.args else None
+            print(e)
+            cur.close()
+            if (error_code == 3819):
+                return {"error": True, "message": "Email is in wrong format."}
+            elif (error_code == 1062):
+                return {"error": True, "message": "Email already in use."}
+            else:
+                return {"error": True, "message": "Unknown error."}
+        return {"error": False}
+    return {"error": True, "message": "Not admin."}
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)

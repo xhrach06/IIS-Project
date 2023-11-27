@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title> Devices </title>
+        <title> Admin Page </title>
          <link rel="stylesheet" href="{{url_for('static', filename='style/admin-user-view.css')}}"> 
          <link rel="stylesheet" href="{{url_for('static', filename='style/header.css')}}"> 
         <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
     </head>
 <body>
-    <div id="header">
-        <img src = "./images/logo.png" alt = "logo">
+    <div style="padding:20px;" id="header">
+        <a></a>
         <nav>
             <ul>
-                <a href="homepage.html"><li>Home</li></a>
-                <a href="devices.html"><li>Devices</li></a>
-                <a href="systems.html"><li>Systems</li></a>
+                <a href="/home"><li>Home</li></a>
             </ul>
         </nav>
-    <a href="profile.html"><img src = "./images/person.jpg" alt = "profile"></a>
+    <a></a>
     </div>
     <div class="main">
         <div class="profiles">
@@ -34,14 +32,40 @@
                     </div>
                     <div class="profile-buttons">
                         <div class="dev-info-button">
-                            <a href="profile.html"><button class="profile-button-info">Info</button></a>
+                            <button onclick="send_form('{{user[0]}}')" class="profile-button-info">Delete</button></a>
                         </div>
                         <div class="edit-button">
-                            <a href="edit-user.html"><button>Edit</button></a>
+                            <a href="/admin-edit-profile?user_id={{user[0]}}"><button>Edit</button></a>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
     </div>
+
+    <script>
+        async function send_form(user_id) {
+            try {
+                const response = await fetch("{{url_for('api_admin_delete_profile')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_id: user_id
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/admin";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+    </script>
 </body>

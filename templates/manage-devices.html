@@ -98,6 +98,7 @@
                         <div class="col-6 d-flex align-items-center justify-content-center flex-column">
                             <h5 class="card-title m-2">{{device[0]}}</h5>
                             <button class="btn btn-light" type="button" onclick="redirectToPage('/edit-device?device_id={{device[4]}}')">Edit Device</button>
+                            <button class="btn btn-light" type="button" onclick="send_form('{{device[4]}}')">Delete Device</button>
                         </div>
                         <div class="vertical-divider"></div>
                         <div class="col-6">
@@ -165,6 +166,30 @@
             window.location.href = url;
         }
     </script>
-    
+    <script>
+        async function send_form(device_id) {
+            try {
+                const response = await fetch("{{url_for('api_delete_device')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        device_id: parseInt(device_id)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/manage-devices";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
+        }
+    </script>
 </body>
 </html>

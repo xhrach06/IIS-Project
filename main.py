@@ -133,7 +133,7 @@ def manage_devices():
 def systems():
     if "user_id" in session:
         cur = mysql.connection.cursor()
-        response = dbQueryEscaped("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date, r.system_id
+        response = dbQueryEscaped("""SELECT systems.system_id, name, dev_count, first_name, last_name, created_date, r.user_id
                                     FROM systems
                                     LEFT JOIN (
                                         SELECT system_id, COUNT(system_id) as dev_count
@@ -142,13 +142,12 @@ def systems():
                                     ) AS device_count ON systems.system_id = device_count.system_id
                                     INNER JOIN user ON systems.user_id = user.user_id
                                     LEFT JOIN share_request r ON systems.system_id = r.system_id
-                                    WHERE systems.user_id != %s
-                                        AND systems.system_id NOT IN (
+                                    WHERE systems.user_id!=%s AND systems.system_id NOT IN (
                                             SELECT system_id
                                             FROM users_systems
                                             WHERE user_id = %s);""", [session["user_id"], session["user_id"]], cur)
         print(response)
-        return render_template("show-all-systems.html", systems=response)
+        return render_template("show-all-systems.html", systems=response, user_id=session["user_id"])
     return redirect(url_for('index'))
 
 
@@ -481,6 +480,22 @@ def api_add_device():
     return {"error": False}
 
 
+@app.route("/api/delete-device", methods=["POST"])
+def api_delete_device():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("DELETE FROM device WHERE device_id=%s;", [form_data["device_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        print(e)
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
+    return {"error": False}
+
+
 @app.route("/api/add-system", methods=["POST"])
 def api_add_system():
     form_data = request.get_json()
@@ -500,6 +515,22 @@ def api_add_system():
         cur.close()
         return {"error": True, "message": "Unknown error."}
     print(form_data)
+    return {"error": False}
+
+
+@app.route("/api/delete-system", methods=["POST"])
+def api_delete_system():
+    form_data = request.get_json()
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("DELETE FROM systems WHERE system_id=%s;", [form_data["system_id"]])
+        mysql.connection.commit()
+        cur.close()
+    except Exception as e:
+        error_code = e.args[0] if e.args else None
+        print(e)
+        cur.close()
+        return {"error": True, "message": "Unknown error."}
     return {"error": False}
 
 
@@ -795,4 +826,4 @@ def api_admin_edit_profile():
     return {"error": True, "message": "Not admin."}
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

@@ -115,6 +115,9 @@
                                                         <button class="btn btn-light" type="button" onclick="redirectToPage('/show-system?sys_id={{system[0]}}')">Show Devices</button>
                                                     </div>
                                                     <button class="btn btn-light" type="button" onclick="redirectToPage('/manage-system?sys_id={{system[0]}}')">Manage System</button>
+                                                    <div class="buttonmargin">
+                                                        <button class="btn btn-light" type="button" onclick="send_form('{{system[0]}}')">Delete System</button>
+                                                    </div>
                                         
 
                                             </div>
@@ -198,6 +201,31 @@
     <script>
         function redirectToPage(url) {
             window.location.href = url;
+        }
+    </script>
+    <script>
+        async function send_form(system_id) {
+            try {
+                const response = await fetch("{{url_for('api_delete_system')}}", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        system_id: parseInt(system_id)
+                    }),
+                });
+                
+                const result = await response.json();
+                if (result.error == false) {
+                    window.location.href = "/my-systems";
+                } else {
+                    alert("Error: "+ result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error (in console)");
+            }
         }
     </script>
 </body>
